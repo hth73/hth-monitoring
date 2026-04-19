@@ -1,0 +1,15 @@
+prometheus.htdom.local {
+  reverse_proxy http://prometheus.htdom.local:9090
+  tls internal
+}
+
+grafana.htdom.local {
+  reverse_proxy http://grafana.htdom.local:3001
+  tls internal
+}
+
+loki.htdom.local {
+  reverse_proxy http://loki.htdom.local:3100
+  tls internal
+}
+

@@ -1,0 +1,93 @@
+---
+x-dns: &default-dns
+  dns:
+    - 192.168.178.3
+
+networks:
+  homenet:
+    name: homenet
+    driver: bridge
+
+services:
+  prometheus:
+    <<: *default-dns
+    image: docker.io/prom/prometheus:v3.11.2
+    container_name: prometheus
+    hostname: prometheus
+    networks: [homenet]  
+    restart: always
+    volumes:
+      - "./config/prometheus:/etc/prometheus"
+      - "/opt/prometheus/data:/prometheus"
+    command:
+      - '--web.page-title=Prometheus Monitoring'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--web.config.file=/etc/prometheus/web_config.yaml'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.external-url=https://prometheus.htdom.local'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    ports:
+      - 9090:9090
+
+  grafana:
+    <<: *default-dns
+    image: docker.io/grafana/grafana:13.0.1
+    container_name: grafana
+    hostname: grafana
+    networks: [homenet]
+    user: root
+    restart: always
+    volumes:
+      - "./config/grafana:/etc/grafana"
+      - "/opt/grafana/data:/var/lib/grafana"
+    ports:
+      - 3001:3001
+
+  loki:
+    <<: *default-dns
+    image: docker.io/grafana/loki:3.7.1
+    container_name: loki
+    hostname: loki
+    networks: [homenet]
+    user: root
+    restart: always
+    volumes:
+      - "./config/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro"
+      - "/opt/loki/data:/loki"
+    command: 
+      -config.file=/etc/loki/loki-config.yaml
+      -config.expand-env=true
+    ports:
+      - "3100:3100"
+
+  dnsmasq:
+    image: docker.io/dockurr/dnsmasq:2.92
+    container_name: dns
+    hostname: dns.${FQDN}
+    network_mode: "host"
+    restart: always
+    volumes:
+      - "./config/dnsmasq:/etc/dnsmasq.d"
+    cap_add:
+      - NET_ADMIN
+    command: --interface=eth0 -r
+
+  caddy:
+    <<: *default-dns
+    image: docker.io/caddy:2.11.2
+    container_name: caddy
+    hostname: caddy
+    networks: [homenet]
+    restart: always
+    volumes:
+      - "./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro"
+      - "/opt/caddy/data:/data"
+      - "/opt/caddy/config:/config"
+    ports:
+      - "80:80"
+      - "443:443"
+
