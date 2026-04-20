@@ -1,4 +1,4 @@
-# Setting up a monitoring environment using Docker Compose.
+# Einrichtung einer Monitoring Umgebung mit Docker Compose.
 
 <img src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat&logo=Raspberry%20Pi&labelColor=ffffff&logoColor=A22846" /> <img src="https://img.shields.io/badge/Ubuntu%20Server-E95420?style=flat&logo=Ubuntu&labelColor=ffffff&logoColor=E95420" /> <img src="https://img.shields.io/badge/Docker%20Compose-2496ED?style=flat&logo=docker&labelColor=ffffff&logoColor=2496ED" /> <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Node%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Loki-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Alloy-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Caddy-1F88C0?style=flat&logo=caddy&labelColor=ffffff&logoColor=1F88C0" /> <img src="https://img.shields.io/badge/dnsmasq-6d06aa?style=flat&logo=nextdns&labelColor=ffffff&logoColor=6d06aa" /> <img src="https://img.shields.io/badge/Pocked%20ID-262626?style=flat&logo=passport&labelColor=ffffff&logoColor=262626" />
 
@@ -15,13 +15,13 @@
 
 ## Beschreibung
 
-In meinem Homelab betreibe ich einen Monitoring Stack bestehend aus Prometheus, Grafana und Loki sowie weiteren Komponenten (siehe Badges). Dieses Repository beschreibt die eingesetzte Architektur und zeigt, wie das Setup verwendet und angepasst werden kann.
+In meinem Homelab betreibe ich einen Monitoring Stack bestehend aus `Prometheus`, `Grafana` und `Grafana Loki` sowie weiteren Komponenten (siehe Badges). Dieses Repository beschreibt die eingesetzte Architektur und zeigt, wie das Setup verwendet und angepasst werden kann.
 
 Ein zentrales Ziel des Setups ist es, alle Services über vollständig qualifizierte Domainnamen (FQDN) erreichbar zu machen. Dadurch entsteht eine konsistente und realitätsnahe Umgebung, ähnlich wie in produktiven Infrastrukturen.
 
 Für die interne Namensauflösung kommt `dnsmasq` zum Einsatz. Die TLS-Terminierung sowie die Ausstellung und Verwaltung von Zertifikaten erfolgt über `Caddy`. Dabei werden ausschließlich interne (self-signed) Zertifikate verwendet, sodass alle Services verschlüsselt über HTTPS erreichbar sind.
 
-Die Reihenfolge und Abhängigkeiten der einzelnen Services sind weiter oben im Repository dokumentiert (siehe Inhaltsverzeichnis).
+Die Reihenfolge und Abhängigkeiten der einzelnen Services wird weiter oben im Repository dokumentiert (siehe Inhaltsverzeichnis).
 
 Das Repository dient sowohl als Referenz für andere als auch als persönliche Dokumentation zum Nachschlagen.
 
@@ -32,6 +32,8 @@ Das hier enthaltene Setup läuft in meiner Umgebung stabil und wird bei Bedarf k
 ---
 
 ### Raspberry Pi Setup
+
+[Pironman 5 Handbuch](https://docs.sunfounder.com/projects/pironman5/de/latest/pironman5/intro_pironman5.html)
 
 - Pironman 5 NVMe M.2 SSD PCIe Mini PC Case for Raspberry Pi 5
 - Crucial SSD M.2 PCIe Gen4 NVMe Hard Drive
