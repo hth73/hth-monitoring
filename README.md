@@ -7,6 +7,7 @@
 ### Inhaltsverzeichnis
 
 * [DNS Server](config/dnsmasq/README.md)
+* [Reverse Proxy & PKI & Container Hardening](config/caddy/README.md)
 * [Prometheus Server](config/prometheus/README.md)
 * [Grafana Server](config/grafana/README.md)
 * [Loki Server](config/loki/README.md)
@@ -29,9 +30,7 @@ Ich versuche, alle relevanten Schritte möglichst detailliert zu dokumentieren, 
 
 Das hier enthaltene Setup läuft in meiner Umgebung stabil und wird bei Bedarf kontinuierlich angepasst und erweitert.
 
----
-
-### Raspberry Pi Setup
+## Raspberry Pi Setup
 
 [Pironman 5 Handbuch](https://docs.sunfounder.com/projects/pironman5/de/latest/pironman5/intro_pironman5.html)
 
@@ -47,7 +46,7 @@ https://www.raspberrypi.com/software/
 Jetzt kopiere man das Ubuntu Server 24.04 ARM Image über das Raspberry Pi Imager Tool auf die SD-Karte und die NVMe Platte.
 Bevor die SD-Karte und die NVMe unmountet wird, müssen noch ein paar Anpassungen in dem Image gemacht werden.
 
-### NVMe Boot vorbereiten
+## NVMe Boot vorbereiten
 
 ```bash
 ## Config.txt anpassen (auf der NVMe /boot/firmware/config.txt)
@@ -60,7 +59,7 @@ Bevor die SD-Karte und die NVMe unmountet wird, müssen noch ein paar Anpassunge
 dtparam=pciex1_gen=3 # Dieser Parameter aktiviert den PCI Express Port mit der Generation 3 auf dem Raspberry Pi 5
 ```
 
-### Bootloader konfigurieren
+## Bootloader konfigurieren
 Jetzt wird alles zusammengebaut, der Rasperry Pi wird mit der SD-Karte und eingebauter NVMe das erste mal gestartet.
 Danach muss der Bootloader konfiguriert werden, damit der Rasperry Pi über die NVMe Festplatte startet.
 
@@ -103,7 +102,7 @@ sudo dmesg | grep -i nvme
 # [   12.986381] block nvme0n1: No UUID available providing old NGUID
 ```
 
-### Netzwerkkarte konfigurieren
+## Netzwerkkarte konfigurieren
 
 ```bash
 sudo vi /etc/netplan/50-cloud-init.yaml
@@ -125,7 +124,7 @@ sudo vi /etc/netplan/50-cloud-init.yaml
 sudo netplan apply
 ```
 
-### Pironman5 Software installieren
+## Pironman5 Software installieren
 Die Lüfter sind noch extrem laut und das Display von dem Gehäuse funktioniert noch nicht.
 
 ```bash
@@ -175,7 +174,7 @@ sudo pironman5 -gm 2
 # 1: Leistung: Die RGB-Lüfter werden bei 50°C aktiviert.
 # 0: Immer An: Die RGB-Lüfter sind immer eingeschaltet.
 ```
-### System Locale konfigurieren
+## System Locale konfigurieren
 
 ```bash
 ## perl: warning: Please check that your locale settings:
@@ -190,7 +189,7 @@ LC_ALL=en_US.UTF-8
 sudo reboot
 ```
 
-### Software auf dem Raspberry Pi installieren
+## Docker Software auf dem Raspberry Pi installieren
 
 ```bash
 sudo apt update && sudo apt upgrade -y

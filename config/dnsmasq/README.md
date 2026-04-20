@@ -4,24 +4,26 @@
 
 ---
 
-[back to home](../../README.md)
+[Back home](../../README.md)
 
 ---
 
 ## Beschreibung
 
 Um auf dem Raspberry Pi einen eigenen DNS-Server zu betreiben, sind einige Anpassungen am lokalen System erforderlich. Diese betreffen insbesondere die bestehende Namensauflösung und die Integration mit Docker.
+
 Das hier beschriebene Setup basiert auf mehreren aufeinander aufbauenden Komponenten. In diesem Abschnitt wird ausschließlich der DNS-Server `dnsmasq` betrachtet. Das vollständige Zusammenspiel aller Services ist in den anderen Abschnitten dokumentiert.
+
 Der DNS-Server übernimmt die interne Namensauflösung im Homelab und stellt sicher, dass alle Services über ihre jeweiligen FQDNs erreichbar sind. Externe Anfragen werden an den Upstream-DNS (z. B. den Router) weitergeleitet.
 Erst in Kombination mit den weiteren Komponenten (insbesondere Reverse Proxy und TLS) ergibt sich das vollständige und funktionierende Gesamtsystem.
 
-### Allgemeine Docker Ordner-Struktur starten
+## Allgemeine Docker Ordner-Struktur starten
 ```bash
 mkdir -p ~/docker/config/dnsmasq
 chmod -R 755 ~/docker/config/dnsmasq
 ```
 
-### dnsmasq Container Vorbereitung
+## dnsmasq Konfiguration
 
 ```bash
 sudo vi ~/docker/config/dnsmasq/dnsmasq.conf
@@ -40,27 +42,35 @@ host-record=prometheus.htdom.local,192.168.178.3
 server=192.168.178.1
 ```
 
-### Docker Compose und Docker Environment Datei vorbereiten
+## Docker Compose und Docker Environment Datei vorbereiten
 
 ```bash
 sudo vi ~/docker/.env
 FQDN=htdom.local
 
 sudo vi ~/docker/docker-compose.yaml
-dnsmasq:
-  image: docker.io/dockurr/dnsmasq:2.92
-  container_name: dns
-  hostname: dns.${FQDN}
-  network_mode: "host"
-  restart: always
-  volumes:
-    - "./config/dnsmasq:/etc/dnsmasq.d"
-  cap_add:
-    - NET_ADMIN
-  command: --interface=eth0 -r
+
+---
+networks:
+  homenet:
+    name: homenet
+    driver: bridge
+
+services:
+  dnsmasq:
+    image: docker.io/dockurr/dnsmasq:2.92
+    container_name: dns
+    hostname: dns.${FQDN}
+    network_mode: "host"
+    restart: always
+    volumes:
+      - "./config/dnsmasq:/etc/dnsmasq.d"
+    cap_add:
+      - NET_ADMIN
+    command: --interface=eth0 -r
 ```
 
-### Raspberry Pi - DNS Server anpassen
+## Raspberry Pi - Lokale DNS Server anpassen
 
 ```bash
 sudo vi /etc/systemd/resolved.conf
