@@ -11,11 +11,8 @@
 ## Beschreibung
 
 Um auf dem Raspberry Pi einen eigenen DNS-Server zu betreiben, sind einige Anpassungen am lokalen System erforderlich. Diese betreffen insbesondere die bestehende Namensauflösung und die Integration mit Docker.
-
 Das hier beschriebene Setup basiert auf mehreren aufeinander aufbauenden Komponenten. In diesem Abschnitt wird ausschließlich der DNS-Server `dnsmasq` betrachtet. Das vollständige Zusammenspiel aller Services ist in den anderen Abschnitten dokumentiert.
-
 Der DNS-Server übernimmt die interne Namensauflösung im Homelab und stellt sicher, dass alle Services über ihre jeweiligen FQDNs erreichbar sind. Externe Anfragen werden an den Upstream-DNS (z. B. den Router) weitergeleitet.
-
 Erst in Kombination mit den weiteren Komponenten (insbesondere Reverse Proxy und TLS) ergibt sich das vollständige und funktionierende Gesamtsystem.
 
 ### Allgemeine Docker Ordner-Struktur starten
