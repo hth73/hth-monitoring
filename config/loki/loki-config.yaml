@@ -17,6 +17,10 @@ ingester:
   chunk_target_size: 3072000
   max_chunk_age: 2h
 
+  wal:
+    dir: /loki/wal
+    flush_on_shutdown: true
+
 common:
   path_prefix: /loki
   storage:

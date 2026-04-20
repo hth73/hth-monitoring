@@ -4,7 +4,7 @@ prometheus.htdom.local {
 }
 
 grafana.htdom.local {
-  reverse_proxy http://grafana.htdom.local:3001
+  reverse_proxy http://grafana.htdom.local:3000
   tls internal
 }
 

@@ -3,6 +3,13 @@ x-dns: &default-dns
   dns:
     - 192.168.178.3
 
+x-security: &default-security
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+
 networks:
   homenet:
     name: homenet
@@ -10,14 +17,17 @@ networks:
 
 services:
   prometheus:
-    <<: *default-dns
     image: docker.io/prom/prometheus:v3.11.2
     container_name: prometheus
     hostname: prometheus
+    user: "65534:65534"
     networks: [homenet]  
     restart: always
+    <<: [*default-dns, *default-security]
+    tmpfs:
+      - /tmp
     volumes:
-      - "./config/prometheus:/etc/prometheus"
+      - "./config/prometheus:/etc/prometheus:ro"
       - "/opt/prometheus/data:/prometheus"
     command:
       - '--web.page-title=Prometheus Monitoring'
@@ -34,27 +44,29 @@ services:
       - 9090:9090
 
   grafana:
-    <<: *default-dns
     image: docker.io/grafana/grafana:13.0.1
     container_name: grafana
     hostname: grafana
+    user: "472:472"
     networks: [homenet]
-    user: root
     restart: always
+    <<: [*default-dns, *default-security]
+    tmpfs:
+      - /tmp
     volumes:
-      - "./config/grafana:/etc/grafana"
+      - "./config/grafana:/etc/grafana:ro"
       - "/opt/grafana/data:/var/lib/grafana"
     ports:
-      - 3001:3001
+      - 3000:3000
 
   loki:
-    <<: *default-dns
     image: docker.io/grafana/loki:3.7.1
     container_name: loki
     hostname: loki
+    user: "10001:10001"
     networks: [homenet]
-    user: root
     restart: always
+    <<: [*default-dns, *default-security]
     volumes:
       - "./config/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro"
       - "/opt/loki/data:/loki"
@@ -77,12 +89,19 @@ services:
     command: --interface=eth0 -r
 
   caddy:
-    <<: *default-dns
     image: docker.io/caddy:2.11.2
     container_name: caddy
     hostname: caddy
     networks: [homenet]
+    user: "65534:65534"
     restart: always
+    <<: [*default-dns, *default-security]
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    tmpfs:
+      - /tmp
     volumes:
       - "./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro"
       - "/opt/caddy/data:/data"
