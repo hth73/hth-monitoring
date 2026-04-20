@@ -17,7 +17,7 @@ Das hier beschriebene Setup basiert auf mehreren aufeinander aufbauenden Kompone
 Der DNS-Server übernimmt die interne Namensauflösung im Homelab und stellt sicher, dass alle Services über ihre jeweiligen FQDNs erreichbar sind. Externe Anfragen werden an den Upstream-DNS (z. B. den Router) weitergeleitet.
 Erst in Kombination mit den weiteren Komponenten (insbesondere Reverse Proxy und TLS) ergibt sich das vollständige und funktionierende Gesamtsystem.
 
-## Allgemeine Docker Ordner-Struktur starten
+## Allgemeine Docker Ordner-Struktur anlegen
 ```bash
 mkdir -p ~/docker/config/dnsmasq
 chmod -R 755 ~/docker/config/dnsmasq

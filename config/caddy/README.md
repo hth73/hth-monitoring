@@ -18,7 +18,7 @@ Um alle Container über HTTPS abzusichern, wird ein Reverse Proxy auf Basis von 
 Der Reverse Proxy übernimmt die TLS-Terminierung und stellt sicher, dass alle Services verschlüsselt über ihre jeweiligen FQDNs erreichbar sind. Eingehende HTTP/HTTPS-Anfragen werden dabei zentral entgegengenommen und an die entsprechenden Container im Hintergrund weitergeleitet.
 
 
-## Ordner-Struktur
+## Caddy Ordner-Struktur
 
 ```bash
 mkdir -p ~/docker/config/caddy
