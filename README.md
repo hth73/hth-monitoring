@@ -11,6 +11,7 @@
 * [Prometheus Server](config/prometheus/README.md)
 * [Grafana Server](config/grafana/README.md)
 * [Loki Server](config/loki/README.md)
+* [Metric & Log Agent](config/metric-log-agents/README.md)
 
 ---
 

@@ -1,0 +1,79 @@
+logging {
+    level  = "debug"
+    format = "logfmt"
+}
+
+loki.relabel "journalctl" {
+    forward_to = []
+
+    rule {
+        source_labels = ["__journal__transport"]
+        regex         = "kernel"
+        action        = "drop"
+    }
+
+    rule {
+        source_labels = ["__journal__systemd_unit"]
+        target_label  = "unit"
+    }
+
+    rule {
+        source_labels = ["__journal__transport"]
+        target_label  = "transport"
+    }
+
+    rule {
+        source_labels = ["__journal__cmdline"]
+        target_label  = "_cmdline"
+    }
+
+    rule {
+        source_labels = ["__journal_priority"]
+        target_label  = "_priority"
+    }
+
+    rule {
+        source_labels = ["__journal_priority_keyword"]
+        target_label  = "priority"
+    }
+
+    rule {
+        source_labels = ["__journal_syslog_identifier"]
+        target_label  = "syslog_identifier"
+    }
+
+    rule {
+        source_labels = ["__journal_syslog_message_severity"]
+        target_label  = "level"
+    }
+
+    rule {
+        source_labels = ["__journal_syslog_message_facility"]
+        target_label  = "syslog_facility"
+    }
+}
+
+loki.source.journal "journalctl" {
+    max_age       = "12h0m0s"
+    path          = "/var/log/journal"
+    relabel_rules = loki.relabel.journalctl.rules
+    forward_to    = [loki.write.grafana_loki.receiver]
+    labels        = {
+        job = "journalctl",
+    }
+}
+
+loki.write "grafana_loki" {
+    endpoint {
+        url = "https://loki.htdom.local/loki/api/v1/push"
+
+        tls_config {
+            insecure_skip_verify = true
+        }
+    }
+
+    external_labels = {
+        job = "alloy-agent",
+        host = "mina.htdom.local",
+    }
+}

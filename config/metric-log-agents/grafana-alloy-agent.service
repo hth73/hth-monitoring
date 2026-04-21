@@ -1,0 +1,13 @@
+[Unit]
+Description=Grafana Alloy Agent
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/usr/local/bin/
+ExecStart=/usr/local/bin/alloy run --server.http.listen-addr=0.0.0.0:3200 /etc/alloy/config.alloy
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

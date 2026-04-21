@@ -1,0 +1,31 @@
+[Unit]
+Description=Prometheus Node Exporter
+After=network-online.target
+
+[Service]
+Type=simple
+User=node_exporter
+Group=node_exporter
+ExecStart=/usr/local/bin/node_exporter \
+  --web.config.file="/etc/node_exporter/config.yaml" \
+  --collector.systemd \
+  --collector.textfile \
+  --collector.textfile.directory=/var/lib/node_exporter \
+  --web.listen-address=0.0.0.0:9100 \
+  --web.telemetry-path=/metrics \
+  --web.disable-exporter-metrics
+
+Restart=always
+RestartSec=1
+StartLimitInterval=0
+
+ProtectHome=yes
+NoNewPrivileges=yes
+
+ProtectSystem=strict
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=yes
+
+[Install]
+WantedBy=multi-user.target

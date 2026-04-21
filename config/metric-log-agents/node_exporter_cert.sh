@@ -19,4 +19,3 @@ EOF
 
 chown -R node_exporter:node_exporter "${CONFIG_PATH}"
 chmod 0750 "${CONFIG_PATH}"
-
