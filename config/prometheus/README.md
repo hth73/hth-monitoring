@@ -218,6 +218,8 @@ x-security: &default-security
     - no-new-privileges:true
   cap_drop:
     - ALL
+  tmpfs:
+    - /tmp
 
 networks:
   homenet:
@@ -233,8 +235,6 @@ services:
     networks: [homenet]  
     restart: always
     <<: [*default-dns, *default-security]
-    tmpfs:
-      - /tmp
     volumes:
       - "./config/prometheus:/etc/prometheus:ro"
       - "/opt/prometheus/data:/prometheus"
