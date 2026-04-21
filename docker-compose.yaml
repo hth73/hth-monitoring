@@ -74,6 +74,22 @@ services:
     ports:
       - "3100:3100"
 
+  blackbox:
+    image: docker.io/prom/blackbox-exporter:v0.28.0
+    container_name: blackbox
+    hostname: blackbox
+    networks: [homenet]
+    restart: always
+    <<: [*default-dns, *default-security]
+    volumes:
+      - "./config/blackbox/blackbox.yml:/etc/blackbox/blackbox.yml:ro"
+    cap_add:
+      - NET_RAW
+    command:
+      - '--config.file=/etc/blackbox/blackbox.yml'
+    ports:
+      - "9115:9115"        
+        
   dnsmasq:
     image: docker.io/dockurr/dnsmasq:2.92
     container_name: dns

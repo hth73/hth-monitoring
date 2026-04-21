@@ -1,0 +1,44 @@
+modules: 
+  http_2xx:
+    prober: http
+    timeout: 10s
+    http:
+      ip_protocol_fallback: false
+      no_follow_redirects: false
+      fail_if_not_ssl: true
+      preferred_ip_protocol: ip4
+      method: GET
+      valid_status_codes: [200, 301, 302]
+      valid_http_versions: 
+        - HTTP/1.1
+        - HTTP/2.0
+      tls_config:
+        insecure_skip_verify: true
+  tcp_connect: 
+    prober: tcp
+    timeout: 10s
+    tcp: 
+      ip_protocol_fallback: false
+      preferred_ip_protocol: ip4
+      tls_config: 
+        insecure_skip_verify: true
+  ssh_banner:
+    prober: tcp
+    timeout: 10s
+    tcp:
+      query_response:
+      - expect: "^SSH-2.0-"
+  icmp:
+    prober: icmp
+    timeout: 5s
+    icmp:
+      preferred_ip_protocol: ip4
+      ip_protocol_fallback: true
+
+  dns:
+    prober: dns
+    timeout: 5s
+    dns:
+      query_name: mina.htdom.local
+      query_type: A
+
