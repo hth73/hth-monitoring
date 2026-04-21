@@ -1,6 +1,6 @@
 # Einrichtung einer Monitoring Umgebung mit Docker Compose.
 
-<img src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat&logo=Raspberry%20Pi&labelColor=ffffff&logoColor=A22846" /> <img src="https://img.shields.io/badge/Ubuntu%20Server-E95420?style=flat&logo=Ubuntu&labelColor=ffffff&logoColor=E95420" /> <img src="https://img.shields.io/badge/Docker%20Compose-2496ED?style=flat&logo=docker&labelColor=ffffff&logoColor=2496ED" /> <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Node%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Loki-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Alloy-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Caddy-1F88C0?style=flat&logo=caddy&labelColor=ffffff&logoColor=1F88C0" /> <img src="https://img.shields.io/badge/dnsmasq-6d06aa?style=flat&logo=nextdns&labelColor=ffffff&logoColor=6d06aa" /> <img src="https://img.shields.io/badge/Pocked%20ID-262626?style=flat&logo=passport&labelColor=ffffff&logoColor=262626" />
+<img src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat&logo=Raspberry%20Pi&labelColor=ffffff&logoColor=A22846" /> <img src="https://img.shields.io/badge/Ubuntu%20Server-E95420?style=flat&logo=Ubuntu&labelColor=ffffff&logoColor=E95420" /> <img src="https://img.shields.io/badge/Docker%20Compose-2496ED?style=flat&logo=docker&labelColor=ffffff&logoColor=2496ED" /> <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Node%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Blackbox%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Loki-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Alloy-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Caddy-1F88C0?style=flat&logo=caddy&labelColor=ffffff&logoColor=1F88C0" /> <img src="https://img.shields.io/badge/dnsmasq-6d06aa?style=flat&logo=nextdns&labelColor=ffffff&logoColor=6d06aa" /> <img src="https://img.shields.io/badge/Pocked%20ID-262626?style=flat&logo=passport&labelColor=ffffff&logoColor=262626" />
 
 ---
 
@@ -12,6 +12,7 @@
 * [Grafana Server](config/grafana/README.md)
 * [Loki Server](config/loki/README.md)
 * [Metric & Log Agent](config/metric-log-agents/README.md)
+* [E2E-Verfügbarkeitsprüfungen](config/blackbox/README.md)
 
 ---
 

@@ -89,25 +89,12 @@ limits_config:
 
 ## Docker Compose Datei
 
-```bash
----
-x-dns: &default-dns
-  dns:
-    - 192.168.178.3
-
-x-security: &default-security
-  read_only: true
-  security_opt:
-    - no-new-privileges:true
-  cap_drop:
-    - ALL
-
-networks:
-  homenet:
-    name: homenet
-    driver: bridge
+```yaml
+...
 
 services:
+  ...
+  
   loki:
     image: docker.io/grafana/loki:3.7.1
     container_name: loki

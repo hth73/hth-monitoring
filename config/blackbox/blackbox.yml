@@ -41,4 +41,3 @@ modules:
     dns:
       query_name: mina.htdom.local
       query_type: A
-

@@ -77,27 +77,12 @@ viewers_can_edit = true ;Allow users to see the Explore Tab (Logs)
 
 ## Docker Compose Datei
 
-```bash
----
-x-dns: &default-dns
-  dns:
-    - 192.168.178.3
-
-x-security: &default-security
-  read_only: true
-  security_opt:
-    - no-new-privileges:true
-  cap_drop:
-    - ALL
-  tmpfs:
-    - /tmp
-
-networks:
-  homenet:
-    name: homenet
-    driver: bridge
+```yaml
+...
 
 services:
+  ...
+  
   grafana:
     image: docker.io/grafana/grafana:13.0.1
     container_name: grafana

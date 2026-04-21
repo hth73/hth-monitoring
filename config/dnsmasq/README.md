@@ -31,6 +31,7 @@ sudo vi ~/docker/config/dnsmasq/dnsmasq.conf
 interface=eth0
 domain=htdom.local
 local=/htdom.local/
+host-record=blackbox.htdom.local,192.168.178.3
 host-record=caddy.htdom.local,192.168.178.3
 host-record=dns.htdom.local,192.168.178.3
 host-record=grafana.htdom.local,192.168.178.3
@@ -49,7 +50,9 @@ sudo vi ~/docker/.env
 FQDN=htdom.local
 
 sudo vi ~/docker/docker-compose.yaml
+```
 
+```yaml
 ---
 networks:
   homenet:

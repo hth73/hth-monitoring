@@ -49,6 +49,25 @@ sudo ls -la /opt/caddy/data/caddy/certificates/local
 ##
 vi ~/docker/config/caddy/Caddyfile
 
+{
+  admin 0.0.0.0:2019 {
+    origins https://caddy.htdom.local https://prometheus.htdom.local https://blackbox.htdom.local
+  }
+  metrics
+}
+
+blackbox.htdom.local {
+  reverse_proxy http://blackbox.htdom.local:9115
+  tls internal
+}
+
+caddy.htdom.local {
+  handle /metrics* {
+    reverse_proxy 127.0.0.1:2019
+  }
+  tls internal
+}
+
 grafana.htdom.local {
   reverse_proxy http://grafana.htdom.local:3000
   tls internal
@@ -57,7 +76,7 @@ grafana.htdom.local {
 loki.htdom.local {
   reverse_proxy http://loki.htdom.local:3100
   tls internal
-}
+}	
 
 prometheus.htdom.local {
   reverse_proxy http://prometheus.htdom.local:9090
@@ -71,34 +90,34 @@ Zur Absicherung der Container wird ein minimaler Sicherheits-Standard umgesetzt.
 
 `read_only: true` setzt das Root-Filesystem des Containers auf "read-only". Dadurch können Prozesse im Container keine Änderungen außerhalb definierter Volumes vornehmen.
 
-```bash
+```yaml
   read_only: true
 ```
 
 `security_opt: no-new-privileges` verhindert, dass Prozesse innerhalb des Containers zusätzliche Privilegien erlangen (z. B. über setuid-Binaries).
 
-```bash
+```yaml
   security_opt:
     - no-new-privileges:true
 ```
 
 `cap_drop: ALL` Entfernt alle Linux-Capabilities vom Container. Linux-Capabilities sind feingranulare Kernel-Rechte (z. B. Netzwerk- oder Systemzugriffe).
 
-```bash
+```yaml
   cap_drop:
     - ALL
 ```
 
 `cap_add (gezielte Freigabe)` fügt gezielt benötigte Capabilities wieder hinzu. `NET_BIND_SERVICE` erlaubt das binden an privilegierte Ports (<1024), z. B. Port 80 oder 443.
 
-```bash
+```yaml
   cap_add:
     - NET_BIND_SERVICE
 ```
 
 `tmpfs` bindet ein temporäres Dateisystem im RAM ein. Vorteil davon ist: keine persistenten Daten auf Festplatte, schnellerer Zugriff und automatische Bereinigung beim Container-Neustart
 
-```bash
+```yaml
   tmpfs:
     - /tmp
 ```
@@ -107,7 +126,7 @@ Zur Absicherung der Container wird ein minimaler Sicherheits-Standard umgesetzt.
 
 Um wiederkehrende Konfigurationen zu vermeiden, werden sogenannte YAML Anchors verwendet. Der Anchor wird mit `&default-dns` oder `&default-security` definiert und kann später in einer YAML Datei referenziert werden.
 
-```bash
+```yaml
 ---
 x-dns: &default-dns
   dns:
@@ -125,7 +144,7 @@ x-security: &default-security
 
 Verwendung in einer YAML Datei (docker-compose.yaml)
 
-```bash
+```yaml
 services:
   grafana:
     image: docker.io/grafana/grafana:13.0.1
@@ -135,13 +154,13 @@ services:
 
 Mehrere Anchors können kombiniert werden, um z. B. DNS- und Security-Konfiguration gemeinsam zu nutzen.
 
-```bash
+```yaml
 <<: [*default-dns, *default-security]
 ```
 
 ## Docker Compose Datei
 
-```bash
+```yaml
 ---
 x-dns: &default-dns
   dns:
@@ -162,7 +181,6 @@ networks:
     driver: bridge
 
 services:
-  dnsmasq:
     ...
 
   caddy:

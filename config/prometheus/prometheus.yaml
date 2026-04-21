@@ -77,4 +77,3 @@ scrape_configs:
       target_label: target
     - target_label: __address__
       replacement: blackbox.htdom.local:9115
-
