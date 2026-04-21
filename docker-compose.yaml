@@ -9,6 +9,8 @@ x-security: &default-security
     - no-new-privileges:true
   cap_drop:
     - ALL
+  tmpfs:
+    - /tmp
 
 networks:
   homenet:
@@ -24,8 +26,6 @@ services:
     networks: [homenet]  
     restart: always
     <<: [*default-dns, *default-security]
-    tmpfs:
-      - /tmp
     volumes:
       - "./config/prometheus:/etc/prometheus:ro"
       - "/opt/prometheus/data:/prometheus"
@@ -51,8 +51,6 @@ services:
     networks: [homenet]
     restart: always
     <<: [*default-dns, *default-security]
-    tmpfs:
-      - /tmp
     volumes:
       - "./config/grafana:/etc/grafana:ro"
       - "/opt/grafana/data:/var/lib/grafana"
@@ -96,12 +94,8 @@ services:
     user: "65534:65534"
     restart: always
     <<: [*default-dns, *default-security]
-    cap_drop:
-      - ALL
     cap_add:
       - NET_BIND_SERVICE
-    tmpfs:
-      - /tmp
     volumes:
       - "./config/caddy/Caddyfile:/etc/caddy/Caddyfile:ro"
       - "/opt/caddy/data:/data"

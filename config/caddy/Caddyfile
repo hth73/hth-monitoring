@@ -1,3 +1,17 @@
+{
+  admin 0.0.0.0:2019 {
+    origins https://caddy.htdom.local https://prometheus.htdom.local
+  }
+  metrics
+}
+
+caddy.htdom.local {
+  handle /metrics* {
+    reverse_proxy 127.0.0.1:2019
+  }
+  tls internal
+}
+
 prometheus.htdom.local {
   reverse_proxy http://prometheus.htdom.local:9090
   tls internal

@@ -37,3 +37,11 @@ scrape_configs:
   static_configs:
     - targets: ["mina.htdom.local:9100"]
 
+- job_name: 'caddy.htdom.local'
+  scheme: https
+  metrics_path: /metrics
+  tls_config:
+    insecure_skip_verify: true
+  static_configs:
+    - targets: ["caddy.htdom.local"]
+
