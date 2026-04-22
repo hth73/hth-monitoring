@@ -1,0 +1,8 @@
+users:
+  hth:
+    displayname: "HTH"
+    password: "$argon2id$v=19$m=65536,t=3,p=4$5WWtc40SzcXspFXUcjC4EQ$bU0EbjQZZYkO3i2WqyaioYXdCSyWRPyqBYsBDWjhHm4"
+    email: hth@htdom.local
+    groups:
+      - admins
+

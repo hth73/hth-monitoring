@@ -1,0 +1,35 @@
+# ----------------------------------------------------------- #
+#                Authelia minimal configuration               #
+# ----------------------------------------------------------- #
+server:
+  address: tcp://0.0.0.0:9091
+
+log:
+  level: trace 
+
+authentication_backend:
+  file:
+    path: /etc/authelia/users.yml
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: "*.htdom.local"
+      policy: one_factor
+
+identity_validation:
+  reset_password: {}
+
+session:
+  cookies:
+    - domain: oidc.htdom.local
+      authelia_url: https://oidc.htdom.local
+
+storage:
+  local:
+    path: /var/lib/authelia/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /var/lib/authelia/notification.txt
+

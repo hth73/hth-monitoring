@@ -88,8 +88,34 @@ services:
     command:
       - '--config.file=/etc/blackbox/blackbox.yml'
     ports:
-      - "9115:9115"        
-        
+      - "9115:9115"
+
+  oidc:
+    image: docker.io/authelia/authelia:4.39
+    container_name: oidc
+    hostname: oidc
+    networks: [homenet]
+    restart: always
+    user: "1000:1000"
+    <<: *default-dns
+    volumes:
+    - "./config/authelia/configuration.yml:/etc/authelia/configuration.yml:ro"
+    - "./config/authelia/users.yml:/etc/authelia/users.yml:ro"
+    - "./config/authelia/secrets:/secrets"
+    - "/opt/authelia/data:/var/lib/authelia"
+    healthcheck:
+      disable: true
+    environment:
+      TZ: Europe/Berlin
+      AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE: /secrets/JWT_SECRET
+      AUTHELIA_SESSION_SECRET_FILE: /secrets/SESSION_SECRET
+      AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE: /secrets/STORAGE_ENCRYPTION_KEY
+    command: >
+      authelia
+      --config /etc/authelia/configuration.yml
+    ports:
+      - "9091:9091"
+
   dnsmasq:
     image: docker.io/dockurr/dnsmasq:2.92
     container_name: dns
@@ -119,3 +145,4 @@ services:
     ports:
       - "80:80"
       - "443:443"
+

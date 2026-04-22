@@ -25,7 +25,12 @@ grafana.htdom.local {
 loki.htdom.local {
   reverse_proxy http://loki.htdom.local:3100
   tls internal
-}	
+}
+
+oidc.htdom.local {
+  reverse_proxy oidc:9091
+  tls internal
+}
 
 prometheus.htdom.local {
   reverse_proxy http://prometheus.htdom.local:9090
