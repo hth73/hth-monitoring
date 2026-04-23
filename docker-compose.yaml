@@ -1,7 +1,7 @@
 ---
 x-dns: &default-dns
   dns:
-    - 192.168.178.3
+    - 192.168.178.50
 
 x-security: &default-security
   read_only: true
@@ -30,11 +30,11 @@ services:
         ipv4_address: 192.168.178.50
     restart: always
     volumes:
-      - "/opt/samba:/usr/local/samba"
+      - "/opt/samba:/var/lib/samba"
     environment:
       - REALM=HTDOM.DE
       - DOMAIN=HTDOM
-      - ADMIN_PASSWORD=CU2Nite!
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - DNS_FORWARDER=192.168.178.1
 
   prometheus:
