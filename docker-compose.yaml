@@ -16,8 +16,27 @@ networks:
   homenet:
     name: homenet
     driver: bridge
-
+  macvlan_ad:
+    external: true
+      
 services:
+  dc1:
+    build: ./samba
+    container_name: dc1
+    hostname: dc1.htdom.de
+    privileged: true
+    networks:
+      macvlan_ad:
+        ipv4_address: 192.168.178.50
+    restart: always
+    volumes:
+      - "/opt/samba:/usr/local/samba"
+    environment:
+      - REALM=HTDOM.DE
+      - DOMAIN=HTDOM
+      - ADMIN_PASSWORD=CU2Nite!
+      - DNS_FORWARDER=192.168.178.1
+
   prometheus:
     image: docker.io/prom/prometheus:v3.11.2
     container_name: prometheus
@@ -115,18 +134,6 @@ services:
       --config /etc/authelia/configuration.yml
     ports:
       - "9091:9091"
-
-  dnsmasq:
-    image: docker.io/dockurr/dnsmasq:2.92
-    container_name: dns
-    hostname: dns.${FQDN}
-    network_mode: "host"
-    restart: always
-    volumes:
-      - "./config/dnsmasq:/etc/dnsmasq.d"
-    cap_add:
-      - NET_ADMIN
-    command: --interface=eth0 -r
 
   caddy:
     image: docker.io/caddy:2.11.2
