@@ -98,6 +98,12 @@ Anpassungen an der `prometheus.yaml` um TLS verwenden zu können ist der Paramet
 
 Das Bash Skript erzeugt eine neue Datei in dem Ordner `/etc/node_exporter` mit dem Namen `config.yaml` Diese wird als Startparameter in der Systemd Datei referenziert.
 
+```yaml
+tls_server_config:
+  cert_file: /etc/node_exporter/mina.htdom.local.crt
+  key_file: /etc/node_exporter/mina.htdom.local.key
+```
+
 ## Node Exporter Systemd Datei
 
 ```bash
@@ -137,14 +143,15 @@ WantedBy=multi-user.target
 ## Windows Exporter als Binary installieren
 
 Auf den Windows Servern wollte ich ursprünglich die vorgefertigte MSI Datei verwenden um diesen Agent installieren zu können.
-Da es hier aber Probleme gab die Zertifikate im Setup Aufruf mitzugeben. Haben ich mich entschieden, nur über das Binary zu arbeiten. Die Software wurde vorab heruntergeladen und in eine Windows Ordner Freigabe abgelegt (\\server.domain.de\software$\windows_exporter)
+Da es hier aber Probleme gab die Zertifikate im Setup Aufruf mitzugeben, haben ich mich entschieden, nur über das Binary zu arbeiten. Die Software wurde vorab heruntergeladen und in eine Windows Ordner Freigabe abgelegt. (\\server.domain.de\software$\windows_exporter)
 
-Auf jeden Windows Server öffnet man dann einen Explorer und in der Adresszeile navigiert man zur Windows Ordner Freigabe. Danach startet man die Batch Datei "install_windows_exporter.cmd"
+Auf jeden Windows Server öffnet man dann einen Explorer und über die Adresszeile navigiert man dann zur Windows Ordner Freigabe. Danach startet man die vorab abgelegte Batch Datei "install_windows_exporter.cmd"
 
-Diese Batchdatei installiert das Binary, OpenSSL Light und erstellt das passende Self-Sign Zertifikat. Damit am Schluss der Windows Service sauber läuft wurde der Service einmal manuel eingerichtet und über die Windows Registry eine Reg-Dump erstellt, dieser Reg-Dump wird später als Import in jeder Installation mitgegeben.
+Diese Batchdatei installiert das Windows Exporter Binary, OpenSSL Light und erstellt das passende Self-Sign Zertifikat.
+Damit am Schluss der Windows Service sauber läuft wurde der Service einmal komplett manuel eingerichtet und über die Windows Registry wurde ein fertiger Reg-Dump erstellt, dieser Reg-Dump wird später als Import in jeder Installation mitgegeben.
 
-Windows Exporter --> https://github.com/prometheus-community/windows_exporter/releases
-OpenSSL Light --> https://slproweb.com/products/Win32OpenSSL.html
+Windows Exporter --> https://github.com/prometheus-community/windows_exporter/releases-<br>
+OpenSSL Light --> https://slproweb.com/products/Win32OpenSSL.html<br>
 Windows Registry Pfad --> HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\windows_exporter
 
 ## config.yaml
