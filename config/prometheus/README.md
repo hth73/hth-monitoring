@@ -136,7 +136,7 @@ command:
   - '--web.config.file=/etc/prometheus/web_config.yaml'
   - '--web.console.libraries=/usr/share/prometheus/console_libraries'
   - '--web.console.templates=/usr/share/prometheus/consoles'
-  - '--web.external-url=https://prometheus.htdom.local'
+  - '--web.external-url=https://prometheus.htdom.de'
   - '--web.enable-lifecycle'
   - '--web.enable-admin-api'
 ```
@@ -158,7 +158,7 @@ sudo chmod 750 /opt/prometheus/data
 # vi ~/docker/docker-compose.yaml
 # --web.enable-lifecycle
 
-curl -Xk POST https://prometheus.htdom.local/-/reload
+curl -Xk POST https://prometheus.htdom.de/-/reload
 ```
 
 ## prometheus.yaml Datei anlegen
@@ -175,33 +175,33 @@ rule_files:
 
 ## Prometheus Server Config
 scrape_configs:
-- job_name: 'prometheus.htdom.local'
+- job_name: 'prometheus.htdom.de'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ['prometheus.htdom.local']
+    - targets: ['prometheus.htdom.de']
 
-- job_name: 'grafana.htdom.local'
+- job_name: 'grafana.htdom.de'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["grafana.htdom.local"]
+    - targets: ["grafana.htdom.de"]
 
-- job_name: 'loki.htdom.local'
+- job_name: 'loki.htdom.de'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["loki.htdom.local"]
+    - targets: ["loki.htdom.de"]
 
-- job_name: 'mina.htdom.local'
+- job_name: 'mina.htdom.de'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["mina.htdom.local:9100"]
+    - targets: ["mina.htdom.de:9100"]
 ```
 
 ## Docker Compose Datei
@@ -231,7 +231,7 @@ services:
       - '--web.config.file=/etc/prometheus/web_config.yaml'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--web.external-url=https://prometheus.htdom.local'
+      - '--web.external-url=https://prometheus.htdom.de'
       - '--web.enable-lifecycle'
       - '--web.enable-admin-api'
     ports:
@@ -241,5 +241,5 @@ services:
 ## Prometheus Web UI
 
 ```bash
-https://prometheus.htdom.local
+https://prometheus.htdom.de
 ```

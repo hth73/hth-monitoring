@@ -88,20 +88,20 @@ chmod 0750 "${CONFIG_PATH}"
 Anpassungen an der `prometheus.yaml` um TLS verwenden zu können ist der Parameter `scheme: https` und `tls_config`. 
 
 ```yaml
-- job_name: 'grafana.htdom.local'
+- job_name: 'grafana.htdom.de'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["grafana.htdom.local"]
+    - targets: ["grafana.htdom.de"]
 ```
 
 Das Bash Skript erzeugt eine neue Datei in dem Ordner `/etc/node_exporter` mit dem Namen `config.yaml` Diese wird als Startparameter in der Systemd Datei referenziert.
 
 ```yaml
 tls_server_config:
-  cert_file: /etc/node_exporter/mina.htdom.local.crt
-  key_file: /etc/node_exporter/mina.htdom.local.key
+  cert_file: /etc/node_exporter/mina.htdom.de.crt
+  key_file: /etc/node_exporter/mina.htdom.de.key
 ```
 
 ## Node Exporter Systemd Datei
@@ -388,7 +388,7 @@ loki.source.journal "journalctl" {
 
 loki.write "grafana_loki" {
     endpoint {
-        url = "https://loki.htdom.local/loki/api/v1/push"
+        url = "https://loki.htdom.de/loki/api/v1/push"
 
         tls_config {
             insecure_skip_verify = true
@@ -397,7 +397,7 @@ loki.write "grafana_loki" {
 
     external_labels = {
         job = "alloy-agent",
-        host = "mina.htdom.local",
+        host = "mina.htdom.de",
     }
 }
 ```
@@ -457,7 +457,7 @@ loki.process "filter_logs" {
 
 loki.write "grafana_loki" {
   endpoint {
-    url = "https://loki.htdom.local/loki/api/v1/push"
+    url = "https://loki.htdom.de/loki/api/v1/push"
 
     tls_config {
       insecure_skip_verify = true
@@ -466,7 +466,7 @@ loki.write "grafana_loki" {
 
   external_labels = {
     job = "alloy-agent",
-    host = "mina.htdom.local",
+    host = "mina.htdom.de",
   }
 }
 ```
@@ -496,7 +496,7 @@ WantedBy=multi-user.target
 ## Logs werden erst an Loki gesendet, wenn es neue Einträge in den Logs gibt.
 ## Wenn keine Einträge geschrieben werden, wird auch nichts an Loki übertragen.
 ##
-curl -sk http://mina.htdom.local:3200/metrics | grep loki
+curl -sk http://mina.htdom.de:3200/metrics | grep loki
 
 # HELP loki_source_file_file_bytes_total Number of bytes total.
 # TYPE loki_source_file_file_bytes_total gauge
@@ -521,12 +521,12 @@ loki_source_file_read_lines_total{component_id="loki.source.file.log_scrape",com
 
 # HELP loki_write_sent_bytes_total Number of bytes sent.
 # TYPE loki_write_sent_bytes_total counter
-loki_write_sent_bytes_total{component_id="loki.write.grafana_loki",component_path="/",host="loki.htdom.local"} 5275
+loki_write_sent_bytes_total{component_id="loki.write.grafana_loki",component_path="/",host="loki.htdom.de"} 5275
 
 # HELP loki_write_sent_entries_total Number of log entries sent to the ingester.
 # TYPE loki_write_sent_entries_total counter
-loki_write_sent_entries_total{component_id="loki.write.grafana_loki",component_path="/",host="loki.htdom.local"} 71
+loki_write_sent_entries_total{component_id="loki.write.grafana_loki",component_path="/",host="loki.htdom.de"} 71
 
-curl -Gk -s 'https://loki.htdom.local/loki/api/v1/query_range' --data-urlencode 'query={job="alloy-agent"}' | jq -r '.'
-curl -Gk -s 'https://loki.htdom.local/loki/api/v1/query_range' --data-urlencode 'query={host="mina.htdom.local"}' | jq -r '.'
+curl -Gk -s 'https://loki.htdom.de/loki/api/v1/query_range' --data-urlencode 'query={job="alloy-agent"}' | jq -r '.'
+curl -Gk -s 'https://loki.htdom.de/loki/api/v1/query_range' --data-urlencode 'query={host="mina.htdom.de"}' | jq -r '.'
 ```

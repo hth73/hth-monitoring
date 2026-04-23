@@ -1,38 +1,38 @@
 {
   admin 0.0.0.0:2019 {
-    origins https://caddy.htdom.local https://prometheus.htdom.local https://blackbox.htdom.local
+    origins https://caddy.htdom.de https://prometheus.htdom.de https://blackbox.htdom.de
   }
   metrics
 }
 
-blackbox.htdom.local {
-  reverse_proxy http://blackbox.htdom.local:9115
+blackbox.htdom.de {
+  reverse_proxy blackbox:9115
   tls internal
 }
 
-caddy.htdom.local {
+caddy.htdom.de {
   handle /metrics* {
     reverse_proxy 127.0.0.1:2019
   }
   tls internal
 }
 
-grafana.htdom.local {
-  reverse_proxy http://grafana.htdom.local:3000
+grafana.htdom.de {
+  reverse_proxy grafana:3000
   tls internal
 }
 
-loki.htdom.local {
-  reverse_proxy http://loki.htdom.local:3100
+loki.htdom.de {
+  reverse_proxy loki:3100
   tls internal
 }
 
-oidc.htdom.local {
+oidc.htdom.de {
   reverse_proxy oidc:9091
   tls internal
 }
 
-prometheus.htdom.local {
-  reverse_proxy http://prometheus.htdom.local:9090
+prometheus.htdom.de {
+  reverse_proxy prometheus:9090
   tls internal
 }

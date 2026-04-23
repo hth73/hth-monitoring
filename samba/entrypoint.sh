@@ -8,13 +8,13 @@ echo "REALM=${REALM}"
 echo "DOMAIN=${DOMAIN}"
 echo "ADMIN_PASSWORD=${ADMIN_PASSWORD}"
 
-# ❗ Hard fail wenn Passwort fehlt
+# Hard fail wenn Passwort fehlt
 if [ -z "$ADMIN_PASSWORD" ]; then
   echo "ERROR: ADMIN_PASSWORD is empty!"
   exit 1
 fi
 
-# ❗ Debian default config entfernen
+# Debian default config entfernen
 rm -f /etc/samba/smb.conf
 
 if [ ! -f "$SAMBA_DIR/private/sam.ldb" ]; then
@@ -33,4 +33,3 @@ fi
 
 echo ">>> Starting Samba AD DC..."
 exec samba -i -M single
-

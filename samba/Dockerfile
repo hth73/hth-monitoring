@@ -25,4 +25,3 @@ VOLUME ["/var/lib/samba", "/etc/samba"]
 EXPOSE 53 88 135 137/udp 138/udp 139 389 445 464 636
 
 ENTRYPOINT ["/entrypoint.sh"]
-

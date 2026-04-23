@@ -37,9 +37,9 @@ sudo ls -la /opt/caddy/data/caddy/pki/authorities/local
 # -rwxr-x--- 1 nobody nogroup  227 Apr 19 14:35 root.key
 
 sudo ls -la /opt/caddy/data/caddy/certificates/local 
-# drwxr-x--- 2 nobody nogroup 4096 Apr 20 16:18 grafana.htdom.local
-# drwxr-x--- 2 nobody nogroup 4096 Apr 20 17:08 loki.htdom.local
-# drwxr-x--- 2 nobody nogroup 4096 Apr 20 14:58 prometheus.htdom.local
+# drwxr-x--- 2 nobody nogroup 4096 Apr 20 16:18 grafana.htdom.de
+# drwxr-x--- 2 nobody nogroup 4096 Apr 20 17:08 loki.htdom.de
+# drwxr-x--- 2 nobody nogroup 4096 Apr 20 14:58 prometheus.htdom.de
 ```
 
 ## Caddyfile
@@ -51,35 +51,35 @@ vi ~/docker/config/caddy/Caddyfile
 
 {
   admin 0.0.0.0:2019 {
-    origins https://caddy.htdom.local https://prometheus.htdom.local https://blackbox.htdom.local
+    origins https://caddy.htdom.de https://prometheus.htdom.de https://blackbox.htdom.de
   }
   metrics
 }
 
-blackbox.htdom.local {
-  reverse_proxy http://blackbox.htdom.local:9115
+blackbox.htdom.de {
+  reverse_proxy http://blackbox.htdom.de:9115
   tls internal
 }
 
-caddy.htdom.local {
+caddy.htdom.de {
   handle /metrics* {
     reverse_proxy 127.0.0.1:2019
   }
   tls internal
 }
 
-grafana.htdom.local {
-  reverse_proxy http://grafana.htdom.local:3000
+grafana.htdom.de {
+  reverse_proxy http://grafana.htdom.de:3000
   tls internal
 }
 
-loki.htdom.local {
-  reverse_proxy http://loki.htdom.local:3100
+loki.htdom.de {
+  reverse_proxy http://loki.htdom.de:3100
   tls internal
 }	
 
-prometheus.htdom.local {
-  reverse_proxy http://prometheus.htdom.local:9090
+prometheus.htdom.de {
+  reverse_proxy http://prometheus.htdom.de:9090
   tls internal
 }
 ```

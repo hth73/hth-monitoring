@@ -33,8 +33,8 @@ sudo chmod 750 /opt/prometheus/data
 [server]
   protocol = http
   http_port = 3000
-  domain = htdom.local
-  root_url = https://grafana.htdom.local
+  domain = htdom.de
+  root_url = https://grafana.htdom.de
 
 [users]
 viewers_can_edit = true ;Allow users to see the Explore Tab (Logs)
@@ -101,11 +101,11 @@ services:
 ## Grafana Web UI
 
 ```bash
-https://grafana.htdom.local # admin/admin
+https://grafana.htdom.de # admin/admin
 ```
 
 ## Grafana Data Sources konfigurieren
 Home -> Connections -> Data sources -> Add new data source -> Prometheus
-https://grafana.htdom.local/connections/datasources
+https://grafana.htdom.de/connections/datasources
 
 Um sich an Grafana über OpenID Connect und Passkey anmelden zu können, wurde ein einfacher OIDC Provider "[Pocket ID Server](../pocketid/README.md)" installiert.

@@ -29,15 +29,15 @@ chmod -R 755 ~/docker/config/dnsmasq
 sudo vi ~/docker/config/dnsmasq/dnsmasq.conf
 
 interface=eth0
-domain=htdom.local
-local=/htdom.local/
-host-record=blackbox.htdom.local,192.168.178.3
-host-record=caddy.htdom.local,192.168.178.3
-host-record=dns.htdom.local,192.168.178.3
-host-record=grafana.htdom.local,192.168.178.3
-host-record=loki.htdom.local,192.168.178.3
-host-record=mina.htdom.local,192.168.178.3
-host-record=prometheus.htdom.local,192.168.178.3
+domain=htdom.de
+local=/htdom.de/
+host-record=blackbox.htdom.de,192.168.178.3
+host-record=caddy.htdom.de,192.168.178.3
+host-record=dns.htdom.de,192.168.178.3
+host-record=grafana.htdom.de,192.168.178.3
+host-record=loki.htdom.de,192.168.178.3
+host-record=mina.htdom.de,192.168.178.3
+host-record=prometheus.htdom.de,192.168.178.3
 
 # Weiterleitung aller anderen Anfragen an den Upstream-DNS Server
 server=192.168.178.1
@@ -47,7 +47,7 @@ server=192.168.178.1
 
 ```bash
 sudo vi ~/docker/.env
-FQDN=htdom.local
+FQDN=htdom.de
 
 sudo vi ~/docker/docker-compose.yaml
 ```
@@ -81,7 +81,7 @@ sudo vi /etc/systemd/resolved.conf
 DNS=192.168.178.3 # DNS Container
 FallbackDNS=192.168.178.1 # Upstream-DNS
 DNSStubListener=no
-Domains=htdom.local
+Domains=htdom.de
 
 # ---
 
@@ -97,7 +97,7 @@ nameserver 192.168.178.1
 nameserver 8.8.8.8
 # Too many DNS servers configured, the following entries may be ignored.
 # ...
-search htdom.local
+search htdom.de
 
 # ---
 
@@ -107,13 +107,13 @@ resolvectl status
 #     resolv.conf mode: uplink
 #          DNS Servers: 192.168.178.3
 # Fallback DNS Servers: 192.168.178.1
-#           DNS Domain: htdom.local
+#           DNS Domain: htdom.de
 
 # Link 2 (eth0)
 #     Current Scopes: DNS
 #          Protocols: +DefaultRoute -LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
 #        DNS Servers: 192.168.178.1 8.8.8.8 fd00::ca0e:14ff:fe74:63d 2001:9e8:a571:8000:ca0e:14ff:fe74:63d 2001:9e8:a57a:d00:ca0e:14ff:fe74:63d
-#         DNS Domain: htdom.local
+#         DNS Domain: htdom.de
 
 # ---
 
@@ -121,7 +121,7 @@ docker run --rm -it alpine cat /etc/resolv.conf
 # ...
 # nameserver 192.168.178.3
 # nameserver 192.168.178.1
-# search htdom.local
+# search htdom.de
 
 # ---
 
@@ -130,7 +130,7 @@ docker logs dns --follow
 # dnsmasq: compile time options: IPv6 GNU-getopt no-DBus no-UBus no-i18n no-IDN DHCP DHCPv6 no-Lua TFTP no-conntrack ipset no-nftset auth DNSSEC loop-detect inotify dumpfile
 # dnsmasq: using nameserver 192.168.178.1#53
 # ...
-# dnsmasq: using only locally-known addresses for htdom.local
+# dnsmasq: using only locally-known addresses for htdom.de
 # dnsmasq: read /etc/hosts - 8 names
 # dnsmasq: exiting on receipt of SIGTERM
 
@@ -161,18 +161,18 @@ sudo netstat -tulnp | grep :53
 
 # ---
 
-nslookup mina.htdom.local 192.168.178.1
+nslookup mina.htdom.de 192.168.178.1
 # Server:   192.168.178.1
 # Address:  192.168.178.1#53
 
-# ** server can't find mina.htdom.local: NXDOMAIN
+# ** server can't find mina.htdom.de: NXDOMAIN
 
 # ---
 
-nslookup mina.htdom.local 192.168.178.3
+nslookup mina.htdom.de 192.168.178.3
 # Server:   192.168.178.3
 # Address:  192.168.178.3#53
 
-# Name: mina.htdom.local
+# Name: mina.htdom.de
 # Address: 192.168.178.3
 ```
