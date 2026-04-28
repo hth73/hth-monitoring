@@ -19,12 +19,12 @@ Die verwendeten Dashboards stammen aus der offiziellen Grafana Dashboard Library
 
 ```bash
 mkdir -p ~/docker/config/grafana/provisioning/{datasources,dashboards,plugins,alerting}
-chmod -R 755 ~/docker/config/grafana
+chmod 0755 ~/docker/config/grafana
 
 sudo mkdir -p /opt/grafana/data
 sudo mkdir -P /opt/grafana
 sudo chown -R 472:472 /opt/grafana/data
-sudo chmod 750 /opt/prometheus/data
+sudo chmod 0750 /opt/prometheus/data
 ```
 
 ## Grafana Konfiguration ohne OIDC
@@ -33,8 +33,8 @@ sudo chmod 750 /opt/prometheus/data
 [server]
   protocol = http
   http_port = 3000
-  domain = htdom.de
-  root_url = https://grafana.htdom.de
+  domain = htdom.lan
+  root_url = https://grafana.htdom.lan
 
 [users]
 viewers_can_edit = true ;Allow users to see the Explore Tab (Logs)
@@ -101,11 +101,9 @@ services:
 ## Grafana Web UI
 
 ```bash
-https://grafana.htdom.de # admin/admin
+https://grafana.htdom.lan # admin/admin
 ```
 
 ## Grafana Data Sources konfigurieren
 Home -> Connections -> Data sources -> Add new data source -> Prometheus
 https://grafana.htdom.de/connections/datasources
-
-Um sich an Grafana über OpenID Connect und Passkey anmelden zu können, wurde ein einfacher OIDC Provider "[Pocket ID Server](../pocketid/README.md)" installiert.

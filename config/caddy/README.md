@@ -22,11 +22,11 @@ Der Reverse Proxy übernimmt die TLS-Terminierung und stellt sicher, dass alle S
 
 ```bash
 mkdir -p ~/docker/config/caddy
-chmod -R 755 ~/docker/config/caddy
+chmod 0755 ~/docker/config/caddy
 
 sudo mkdir -p /opt/caddy/{data,config}
 sudo chown -R 65534:65534 /opt/caddy
-sudo chmod -R 750 /opt/caddy
+sudo chmod 0750 /opt/caddy
 
 ## Hier findet man später alle Zertifikate für die Umgebung
 ##
@@ -37,9 +37,9 @@ sudo ls -la /opt/caddy/data/caddy/pki/authorities/local
 # -rwxr-x--- 1 nobody nogroup  227 Apr 19 14:35 root.key
 
 sudo ls -la /opt/caddy/data/caddy/certificates/local 
-# drwxr-x--- 2 nobody nogroup 4096 Apr 20 16:18 grafana.htdom.de
-# drwxr-x--- 2 nobody nogroup 4096 Apr 20 17:08 loki.htdom.de
-# drwxr-x--- 2 nobody nogroup 4096 Apr 20 14:58 prometheus.htdom.de
+# drwxr-x--- 2 nobody nogroup 4096 Apr 20 16:18 grafana.htdom.lan
+# drwxr-x--- 2 nobody nogroup 4096 Apr 20 17:08 loki.htdom.lan
+# drwxr-x--- 2 nobody nogroup 4096 Apr 20 14:58 prometheus.htdom.lan
 ```
 
 ## Caddyfile
@@ -51,35 +51,44 @@ vi ~/docker/config/caddy/Caddyfile
 
 {
   admin 0.0.0.0:2019 {
-    origins https://caddy.htdom.de https://prometheus.htdom.de https://blackbox.htdom.de
+    origins https://caddy.htdom.lan https://prometheus.htdom.lan https://blackbox.htdom.lan
   }
   metrics
 }
 
-blackbox.htdom.de {
-  reverse_proxy http://blackbox.htdom.de:9115
+blackbox.htdom.lan {
+  reverse_proxy blackbox:9115
   tls internal
 }
 
-caddy.htdom.de {
+caddy.htdom.lan {
   handle /metrics* {
     reverse_proxy 127.0.0.1:2019
   }
   tls internal
 }
 
-grafana.htdom.de {
-  reverse_proxy http://grafana.htdom.de:3000
+dc.htdom.lan {
   tls internal
 }
 
-loki.htdom.de {
-  reverse_proxy http://loki.htdom.de:3100
+grafana.htdom.lan {
+  reverse_proxy grafana:3000
   tls internal
-}	
+}
 
-prometheus.htdom.de {
-  reverse_proxy http://prometheus.htdom.de:9090
+loki.htdom.lan {
+  reverse_proxy loki:3100
+  tls internal
+}
+
+oidc.htdom.lan {
+  reverse_proxy oidc:9091
+  tls internal
+}
+
+prometheus.htdom.lan {
+  reverse_proxy prometheus:9090
   tls internal
 }
 ```
@@ -130,7 +139,7 @@ Um wiederkehrende Konfigurationen zu vermeiden, werden sogenannte YAML Anchors v
 ---
 x-dns: &default-dns
   dns:
-    - 192.168.178.3
+    - 192.168.178.50
 
 x-security: &default-security
   read_only: true
@@ -164,7 +173,7 @@ Mehrere Anchors können kombiniert werden, um z. B. DNS- und Security-Konfigurat
 ---
 x-dns: &default-dns
   dns:
-    - 192.168.178.3
+    - 192.168.178.50
 
 x-security: &default-security
   read_only: true

@@ -14,7 +14,7 @@ authentication_backend:
 access_control:
   default_policy: deny
   rules:
-    - domain: "*.htdom.de"
+    - domain: "*.htdom.lan"
       policy: one_factor
 
 identity_validation:
@@ -22,8 +22,8 @@ identity_validation:
 
 session:
   cookies:
-    - domain: oidc.htdom.de
-      authelia_url: https://oidc.htdom.de
+    - domain: oidc.htdom.lan
+      authelia_url: https://oidc.htdom.lan
 
 storage:
   local:

@@ -49,7 +49,7 @@ Diese Prüfungen sind essenziell, da das gesamte Setup auf einer funktionierende
 
 ```bash
 mkdir -p ~/docker/config/blackbox
-chmod -R 755 ~/docker/config/blackbox
+chmod 0755 ~/docker/config/blackbox
 ```
 
 ## blackbox.yml
@@ -96,7 +96,7 @@ modules:
     prober: dns
     timeout: 5s
     dns:
-      query_name: mina.htdom.de
+      query_name: mina.htdom.lan
       query_type: A
 ```
 
@@ -143,7 +143,7 @@ services:
     - source_labels: [__param_target]
       target_label: target
     - target_label: __address__
-      replacement: blackbox.htdom.de:9115      
+      replacement: blackbox.htdom.lan:9115      
 
 - job_name: 'blackbox-http-check'
   metrics_path: /probe
@@ -151,17 +151,17 @@ services:
     module: [ http_2xx ]
   static_configs:
     - targets:
-      - https://caddy.htdom.de/metrics
-      - https://grafana.htdom.de/metrics
-      - https://loki.htdom.de/ready
-      - https://prometheus.htdom.de/metrics
+      - https://caddy.htdom.lan/metrics
+      - https://grafana.htdom.lan/metrics
+      - https://loki.htdom.lan/ready
+      - https://prometheus.htdom.lan/metrics
   relabel_configs:
     - source_labels: [__address__]
       target_label: __param_target
     - source_labels: [__param_target]
       target_label: target
     - target_label: __address__
-      replacement: blackbox.htdom.de:9115
+      replacement: blackbox.htdom.lan:9115
 ```
 
 ## blackbox.yml - Beispiele für weitere E2E Tests
@@ -254,7 +254,7 @@ count(probe_success{job=~"$job", instance=~"$instance"} == 1)
 count(probe_success{job=~"$job", instance=~"$instance"} == 0)
 
 avg(scrape_duration_seconds{job=~"$job", instance=~"$instance"})
-avg(scrape_duration_seconds{job="blackbox-http-check", instance=~"https://mina.htdom.de/metrics"})
+avg(scrape_duration_seconds{job="blackbox-http-check", instance=~"https://www.domain.de/metrics"})
 
 avg by (phase) (probe_http_duration_seconds{job=~"$job", instance=~"$instance"})
 
@@ -263,9 +263,9 @@ count by (version) (probe_tls_version_info{job=~"$job", instance=~"$instance"})
 count_values("value", probe_http_status_code{job=~"$job", instance=~"$instance"})
 
 (probe_ssl_earliest_cert_expiry{job=~"$job", instance=~"$instance"} - time()) / 3600 / 24
-(probe_ssl_earliest_cert_expiry{job=~"blackbox-http-check", instance=~"https://mina.htdom.de/metrics"} - time()) / 3600 / 24
+(probe_ssl_earliest_cert_expiry{job=~"blackbox-http-check", instance=~"https://www.domain.de/metrics"} - time()) / 3600 / 24
 
-avg_over_time(probe_duration_seconds{job=~"blackbox-http-check", instance=~"https://mina.htdom.de/metrics"}[1m])
+avg_over_time(probe_duration_seconds{job=~"blackbox-http-check", instance=~"https://www.domain.de/metrics"}[1m])
 
 probe_tls_version_info{job=~"$job", instance=~"$instance"}
 probe_http_version{job=~"$job", instance=~"$instance"}

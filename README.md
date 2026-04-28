@@ -1,12 +1,12 @@
 # Einrichtung einer Monitoring Umgebung mit Docker Compose.
 
-<img src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat&logo=Raspberry%20Pi&labelColor=ffffff&logoColor=A22846" /> <img src="https://img.shields.io/badge/Ubuntu%20Server-E95420?style=flat&logo=Ubuntu&labelColor=ffffff&logoColor=E95420" /> <img src="https://img.shields.io/badge/Docker%20Compose-2496ED?style=flat&logo=docker&labelColor=ffffff&logoColor=2496ED" /> <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Node%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Blackbox%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Loki-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Alloy-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Caddy-1F88C0?style=flat&logo=caddy&labelColor=ffffff&logoColor=1F88C0" /> <img src="https://img.shields.io/badge/dnsmasq-6d06aa?style=flat&logo=nextdns&labelColor=ffffff&logoColor=6d06aa" /> <img src="https://img.shields.io/badge/Pocked%20ID-262626?style=flat&logo=passport&labelColor=ffffff&logoColor=262626" />
+<img src="https://img.shields.io/badge/Raspberry%20Pi-A22846?style=flat&logo=Raspberry%20Pi&labelColor=ffffff&logoColor=A22846" /> <img src="https://img.shields.io/badge/Ubuntu%20Server-E95420?style=flat&logo=Ubuntu&labelColor=ffffff&logoColor=E95420" /> <img src="https://img.shields.io/badge/Docker%20Compose-2496ED?style=flat&logo=docker&labelColor=ffffff&logoColor=2496ED" /> <img src="https://img.shields.io/badge/Prometheus-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Node%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Blackbox%20Exporter-E6522C?style=flat&logo=prometheus&labelColor=ffffff&logoColor=E6522C" /> <img src="https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Loki-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Grafana%20Alloy-F46800?style=flat&logo=grafana&labelColor=ffffff&logoColor=F46800" /> <img src="https://img.shields.io/badge/Caddy-1F88C0?style=flat&logo=caddy&labelColor=ffffff&logoColor=1F88C0" /> <img src="https://img.shields.io/badge/Authelia-113155?style=flat&logo=authelia&labelColor=ffffff&logoColor=113155" /> <img src="https://img.shields.io/badge/Samba%204%20(LDAPS)-2196F3?style=flat&logo=codesandbox&labelColor=ffffff&logoColor=2196F3" />
 
 ---
 
 ### Inhaltsverzeichnis
 
-* [DNS Server](config/dnsmasq/README.md)
+* [Samba 4 - Active Directory (Ersatz)](samba/README.md)
 * [Reverse Proxy & PKI & Container Hardening](config/caddy/README.md)
 * [Prometheus Server](config/prometheus/README.md)
 * [Grafana Server](config/grafana/README.md)
@@ -120,8 +120,8 @@ sudo vi /etc/netplan/50-cloud-init.yaml
 #         - to: default
 #           via: 192.168.178.1
 #       nameservers:
-#         addresses: [192.168.178.1, 8.8.8.8]
-#         search: [htdom.local]
+#         addresses: [192.168.178.50, 192.168.178.1]
+#         search: [htdom.lan, htdom.local]
 
 sudo netplan apply
 ```

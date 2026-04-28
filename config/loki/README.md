@@ -21,11 +21,11 @@ Grafana Alloy übernimmt dabei die Rolle des Log-Collectors und sendet die gesam
 
 ```bash
 mkdir -p ~/docker/config/loki
-chmod -R 755 ~/docker/config/loki
+chmod 0755 ~/docker/config/loki
 
 sudo mkdir -p /opt/loki/data
 sudo chown -R 10001:10001 /opt/loki/data
-sudo chmod -R 750 /opt/loki/data
+sudo chmod 0750 /opt/loki/data
 ```
 
 ## Loki Server Konfiguration
@@ -118,46 +118,46 @@ services:
 ## Loki Web Endpoints
 
 ```bash
-https://loki.htdom.de/ready
-https://loki.htdom.de/config
-https://loki.htdom.de/metrics
-https://loki.htdom.de/ring
+https://loki.htdom.lan/ready
+https://loki.htdom.lan/config
+https://loki.htdom.lan/metrics
+https://loki.htdom.lan/ring
 ```
 
 ## Beispiel Abfragen ob Loki Daten zurückliefert
 
 ```bash
-## https://loki.htdom.de/ready
-## https://loki.htdom.de/metrics
+## https://loki.htdom.lan/ready
+## https://loki.htdom.lan/metrics
 ##
-curl -Gk -s "https://loki.htdom.de/loki/api/v1/labels" | jq -r '.'
-curl -Gk -s "https://loki.htdom.de/loki/api/v1/label/host/values" | jq -r '.data[]'
-curl -Gk -s "https://loki.htdom.de/loki/api/v1/query_range" --data-urlencode 'query=sum(rate({job="varlogs"}[10m])) by (level)' --data-urlencode 'step=300' | jq
-curl -Gk -s "https://loki.htdom.de/loki/api/v1/query_range" --data-urlencode 'query={job="varlogs"}' | jq -r '.'
+curl -Gk -s "https://loki.htdom.lan/loki/api/v1/labels" | jq -r '.'
+curl -Gk -s "https://loki.htdom.lan/loki/api/v1/label/host/values" | jq -r '.data[]'
+curl -Gk -s "https://loki.htdom.lan/loki/api/v1/query_range" --data-urlencode 'query=sum(rate({job="varlogs"}[10m])) by (level)' --data-urlencode 'step=300' | jq
+curl -Gk -s "https://loki.htdom.lan/loki/api/v1/query_range" --data-urlencode 'query={job="varlogs"}' | jq -r '.'
 
-curl -sk "https://loki.htdom.de/loki/api/v1/series" --data-urlencode 'match[]={host=~"mina.*"}' | jq -r '.'
-curl -sk "https://loki.htdom.de/loki/api/v1/series" --data-urlencode 'match[]={syslog_identifier=~"sshd*"}' | jq -r '.'
-curl -sk "https://loki.htdom.de/loki/api/v1/series" --data-urlencode 'match[]={priority=~"error*"}' | jq -r '.'
+curl -sk "https://loki.htdom.lan/loki/api/v1/series" --data-urlencode 'match[]={host=~"mina.*"}' | jq -r '.'
+curl -sk "https://loki.htdom.lan/loki/api/v1/series" --data-urlencode 'match[]={syslog_identifier=~"sshd*"}' | jq -r '.'
+curl -sk "https://loki.htdom.lan/loki/api/v1/series" --data-urlencode 'match[]={priority=~"error*"}' | jq -r '.'
 
-curl -Gk -s "https://loki.htdom.de/loki/api/v1/query" --data-urlencode 'query=sum(rate({syslog_identifier="sshd"}[30m])) by (unit)' | jq -r '.'
-curl -Gk -s "https://loki.htdom.de/loki/api/v1/query_range" --data-urlencode 'query={syslog_identifier="sshd"}' | jq -r '.'
+curl -Gk -s "https://loki.htdom.lan/loki/api/v1/query" --data-urlencode 'query=sum(rate({syslog_identifier="sshd"}[30m])) by (unit)' | jq -r '.'
+curl -Gk -s "https://loki.htdom.lan/loki/api/v1/query_range" --data-urlencode 'query={syslog_identifier="sshd"}' | jq -r '.'
 
 ## Unix Timestamp berücksichtigen beim hinzufügen von Datensätzen (--> [1715785516]000000000 <--)
 ## https://www.unixtimestamp.com/
 
 ## Daten an Loki senden und wieder abfragen
 ##
-curl -Sk -H "Content-Type: application/json" -XPOST -s https://loki.htdom.de/loki/api/v1/push --data-raw '{"streams": [{ "stream": { "app": "app1" }, "values": [ [ "1715785516000000000", "random log line" ] ] }]}'
+curl -Sk -H "Content-Type: application/json" -XPOST -s https://loki.htdom.lan/loki/api/v1/push --data-raw '{"streams": [{ "stream": { "app": "app1" }, "values": [ [ "1715785516000000000", "random log line" ] ] }]}'
 
 ## entry for stream '{app="app1"}' has timestamp too old: 2022-05-29T20:18:38Z, oldest acceptable timestamp is: 2024-05-08T15:02:04Z
 
-curl -k https://loki.htdom.de/loki/api/v1/labels
+curl -k https://loki.htdom.lan/loki/api/v1/labels
 ## {"status":"success","data":["_cmdline","_priority","app","host_name","job","priority","syslog_identifier","transport","unit"]}
 
-curl -k https://loki.htdom.de/loki/api/v1/label/app/values
+curl -k https://loki.htdom.lan/loki/api/v1/label/app/values
 ## {"status":"success","data":["app1"]}
 
-curl -Gk -Ss https://loki.htdom.de/loki/api/v1/query_range --data-urlencode 'query={app="app1"}' | jq -r '.'
+curl -Gk -Ss https://loki.htdom.lan/loki/api/v1/query_range --data-urlencode 'query={app="app1"}' | jq -r '.'
 # {
 #   "status": "success",
 #   "data": {

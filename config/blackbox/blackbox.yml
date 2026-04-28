@@ -39,5 +39,5 @@ modules:
     prober: dns
     timeout: 5s
     dns:
-      query_name: mina.htdom.de
+      query_name: mina.htdom.lan
       query_type: A

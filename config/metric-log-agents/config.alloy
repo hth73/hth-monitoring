@@ -65,7 +65,7 @@ loki.source.journal "journalctl" {
 
 loki.write "grafana_loki" {
     endpoint {
-        url = "https://loki.htdom.de/loki/api/v1/push"
+        url = "https://loki.htdom.lan/loki/api/v1/push"
 
         tls_config {
             insecure_skip_verify = true
@@ -74,6 +74,6 @@ loki.write "grafana_loki" {
 
     external_labels = {
         job = "alloy-agent",
-        host = "mina.htdom.de",
+        host = "mina.htdom.lan",
     }
 }

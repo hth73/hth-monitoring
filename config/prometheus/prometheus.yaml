@@ -9,41 +9,41 @@ rule_files:
 
 ## Prometheus Server Config
 scrape_configs:
-- job_name: 'prometheus.htdom.de'
+- job_name: 'prometheus.htdom.lan'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ['prometheus.htdom.de']
+    - targets: ['prometheus.htdom.lan']
 
-- job_name: 'grafana.htdom.de'
+- job_name: 'grafana.htdom.lan'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["grafana.htdom.de"]
+    - targets: ["grafana.htdom.lan"]
 
-- job_name: 'loki.htdom.de'
+- job_name: 'loki.htdom.lan'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["loki.htdom.de"]
+    - targets: ["loki.htdom.lan"]
 
-- job_name: 'mina.htdom.de'
+- job_name: 'mina.htdom.lan'
   scheme: https
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["mina.htdom.de:9100"]
+    - targets: ["mina.htdom.lan:9100"]
 
-- job_name: 'caddy.htdom.de'
+- job_name: 'caddy.htdom.lan'
   scheme: https
   metrics_path: /metrics
   tls_config:
     insecure_skip_verify: true
   static_configs:
-    - targets: ["caddy.htdom.de"]
+    - targets: ["caddy.htdom.lan"]
 
 - job_name: 'blackbox-dns-check'
   metrics_path: /probe
@@ -58,7 +58,7 @@ scrape_configs:
     - source_labels: [__param_target]
       target_label: target
     - target_label: __address__
-      replacement: blackbox.htdom.de:9115      
+      replacement: blackbox.htdom.lan:9115      
 
 - job_name: 'blackbox-http-check'
   metrics_path: /probe
@@ -66,14 +66,14 @@ scrape_configs:
     module: [ http_2xx ]
   static_configs:
     - targets:
-      - https://caddy.htdom.de/metrics
-      - https://grafana.htdom.de/metrics
-      - https://loki.htdom.de/ready
-      - https://prometheus.htdom.de/metrics
+      - https://caddy.htdom.lan/metrics
+      - https://grafana.htdom.lan/metrics
+      - https://loki.htdom.lan/ready
+      - https://prometheus.htdom.lan/metrics
   relabel_configs:
     - source_labels: [__address__]
       target_label: __param_target
     - source_labels: [__param_target]
       target_label: target
     - target_label: __address__
-      replacement: blackbox.htdom.de:9115
+      replacement: blackbox.htdom.lan:9115

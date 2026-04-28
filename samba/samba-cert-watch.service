@@ -1,0 +1,14 @@
+[Unit]
+Description=Watch Caddy certs and sync to Samba
+After=docker.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c '\
+inotifywait -m /opt/caddy/data/caddy/certificates/local/dc.htdom.lan -e close_write | \
+while read; do /usr/local/bin/samba-cert-sync.sh; done'
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

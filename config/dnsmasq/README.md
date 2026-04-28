@@ -20,7 +20,7 @@ Erst in Kombination mit den weiteren Komponenten (insbesondere Reverse Proxy und
 ## Allgemeine Docker Ordner-Struktur anlegen
 ```bash
 mkdir -p ~/docker/config/dnsmasq
-chmod -R 755 ~/docker/config/dnsmasq
+chmod -R 0755 ~/docker/config/dnsmasq
 ```
 
 ## dnsmasq Konfiguration
@@ -29,15 +29,15 @@ chmod -R 755 ~/docker/config/dnsmasq
 sudo vi ~/docker/config/dnsmasq/dnsmasq.conf
 
 interface=eth0
-domain=htdom.de
-local=/htdom.de/
-host-record=blackbox.htdom.de,192.168.178.3
-host-record=caddy.htdom.de,192.168.178.3
-host-record=dns.htdom.de,192.168.178.3
-host-record=grafana.htdom.de,192.168.178.3
-host-record=loki.htdom.de,192.168.178.3
-host-record=mina.htdom.de,192.168.178.3
-host-record=prometheus.htdom.de,192.168.178.3
+domain=htdom.lan
+local=/htdom.lan/
+host-record=blackbox.htdom.lan,192.168.178.3
+host-record=caddy.htdom.lan,192.168.178.3
+host-record=dns.htdom.lan,192.168.178.3
+host-record=grafana.htdom.lan,192.168.178.3
+host-record=loki.htdom.lan,192.168.178.3
+host-record=mina.htdom.lan,192.168.178.3
+host-record=prometheus.htdom.lan,192.168.178.3
 
 # Weiterleitung aller anderen Anfragen an den Upstream-DNS Server
 server=192.168.178.1
@@ -47,7 +47,7 @@ server=192.168.178.1
 
 ```bash
 sudo vi ~/docker/.env
-FQDN=htdom.de
+FQDN=htdom.lan
 
 sudo vi ~/docker/docker-compose.yaml
 ```
