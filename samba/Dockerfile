@@ -11,10 +11,8 @@ RUN apt-get update && \
       dnsutils \
       iproute2 \
       procps \
+      ldap-utils \
       && rm -rf /var/lib/apt/lists/*
-
-# Optional: tools für debugging
-RUN apt-get update && apt-get install -y ldap-utils
 
 # Entrypoint Script
 COPY entrypoint.sh /entrypoint.sh
