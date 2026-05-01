@@ -90,6 +90,15 @@ else
   ' "$SMB_CONF" > /tmp/smb.conf && mv /tmp/smb.conf "$SMB_CONF"
 fi
 
+# --- resolv.conf fix
+cat <<EOF > /etc/resolv.conf
+nameserver 127.0.0.1
+search htdom.lan
+EOF
+
+echo ">>> resolv.conf fixed"
+cat /etc/resolv.conf
+
 echo ">>> Starting Samba AD DC..."
 exec samba -i -M single
 
