@@ -39,5 +39,6 @@ modules:
     prober: dns
     timeout: 5s
     dns:
-      query_name: mina.htdom.lan
+      query_name: grafana.htdom.lan
       query_type: A
+

@@ -2,6 +2,7 @@
 x-dns: &default-dns
   dns:
     - 192.168.178.50
+    - 192.168.178.1
 
 x-security: &default-security
   read_only: true
@@ -40,77 +41,77 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - DNS_FORWARDER=192.168.178.1
 
-#  prometheus:
-#    image: docker.io/prom/prometheus:v3.11.2
-#    container_name: prometheus
-#    hostname: prometheus
-#    user: "65534:65534"
-#    networks: [homenet]  
-#    restart: always
-#    <<: [*default-dns, *default-security]
-#    volumes:
-#      - "./config/prometheus:/etc/prometheus:ro"
-#      - "/opt/prometheus/data:/prometheus"
-#    command:
-#      - '--web.page-title=Prometheus Monitoring'
-#      - '--storage.tsdb.path=/prometheus'
-#      - '--storage.tsdb.retention.time=30d'
-#      - '--config.file=/etc/prometheus/prometheus.yaml'
-#      - '--web.config.file=/etc/prometheus/web_config.yaml'
-#      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-#      - '--web.console.templates=/usr/share/prometheus/consoles'
-#      - '--web.external-url=https://prometheus.htdom.de'
-#      - '--web.enable-lifecycle'
-#      - '--web.enable-admin-api'
-#    ports:
-#      - 9090:9090
+  prometheus:
+    image: docker.io/prom/prometheus:v3.11.2
+    container_name: prometheus
+    hostname: prometheus
+    user: "65534:65534"
+    networks: [homenet]  
+    restart: always
+    <<: [*default-dns, *default-security]
+    volumes:
+      - "./config/prometheus:/etc/prometheus:ro"
+      - "/opt/prometheus/data:/prometheus"
+    command:
+      - '--web.page-title=Prometheus Monitoring'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--web.config.file=/etc/prometheus/web_config.yaml'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.external-url=https://prometheus.htdom.de'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    ports:
+      - 9090:9090
 
-#  grafana:
-#    image: docker.io/grafana/grafana:13.0.1
-#    container_name: grafana
-#    hostname: grafana
-#    user: "472:472"
-#    networks: [homenet]
-#    restart: always
-#    <<: [*default-dns, *default-security]
-#    volumes:
-#      - "./config/grafana:/etc/grafana:ro"
-#      - "/opt/grafana/data:/var/lib/grafana"
-#    ports:
-#      - 3000:3000
+  grafana:
+    image: docker.io/grafana/grafana:13.0.1
+    container_name: grafana
+    hostname: grafana
+    user: "472:472"
+    networks: [homenet]
+    restart: always
+    <<: [*default-dns, *default-security]
+    volumes:
+      - "./config/grafana:/etc/grafana:ro"
+      - "/opt/grafana/data:/var/lib/grafana"
+    ports:
+      - 3000:3000
 
-#  loki:
-#    image: docker.io/grafana/loki:3.7.1
-#    container_name: loki
-#    hostname: loki
-#    user: "10001:10001"
-#    networks: [homenet]
-#    restart: always
-#    <<: [*default-dns, *default-security]
-#    volumes:
-#      - "./config/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro"
-#      - "/opt/loki/data:/loki"
-#    command: 
-#      -config.file=/etc/loki/loki-config.yaml
-#      -config.expand-env=true
-#    ports:
-#      - "3100:3100"
+  loki:
+    image: docker.io/grafana/loki:3.7.1
+    container_name: loki
+    hostname: loki
+    user: "10001:10001"
+    networks: [homenet]
+    restart: always
+    <<: [*default-dns, *default-security]
+    volumes:
+      - "./config/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro"
+      - "/opt/loki/data:/loki"
+    command: 
+      -config.file=/etc/loki/loki-config.yaml
+      -config.expand-env=true
+    ports:
+      - "3100:3100"
 
-#  blackbox:
-#    image: docker.io/prom/blackbox-exporter:v0.28.0
-#    container_name: blackbox
-#    hostname: blackbox
-#    networks: [homenet]
-#    restart: always
-#    <<: [*default-dns, *default-security]
-#    volumes:
-#      - "./config/blackbox/blackbox.yml:/etc/blackbox/blackbox.yml:ro"
-#    cap_add:
-#      - NET_RAW
-#    command:
-#      - '--config.file=/etc/blackbox/blackbox.yml'
-#    ports:
-#      - "9115:9115"
+  blackbox:
+    image: docker.io/prom/blackbox-exporter:v0.28.0
+    container_name: blackbox
+    hostname: blackbox
+    networks: [homenet]
+    restart: always
+    <<: [*default-dns, *default-security]
+    volumes:
+      - "./config/blackbox/blackbox.yml:/etc/blackbox/blackbox.yml:ro"
+    cap_add:
+      - NET_RAW
+    command:
+      - '--config.file=/etc/blackbox/blackbox.yml'
+    ports:
+      - "9115:9115"
 
 #  oidc:
 #    image: docker.io/authelia/authelia:4.39
