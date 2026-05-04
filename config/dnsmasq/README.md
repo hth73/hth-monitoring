@@ -1,4 +1,4 @@
-# DNS Server
+# DNS Server (außer Betrieb - siehe Samba 4)
 
 <img src="https://img.shields.io/badge/dnsmasq-6d06aa?style=flat&logo=nextdns&labelColor=ffffff&logoColor=6d06aa" />
 
@@ -94,10 +94,9 @@ sudo reboot
 cat /etc/resolv.conf
 nameserver 192.168.178.3
 nameserver 192.168.178.1
-nameserver 8.8.8.8
 # Too many DNS servers configured, the following entries may be ignored.
 # ...
-search htdom.de
+search htdom.lan
 
 # ---
 
@@ -107,13 +106,13 @@ resolvectl status
 #     resolv.conf mode: uplink
 #          DNS Servers: 192.168.178.3
 # Fallback DNS Servers: 192.168.178.1
-#           DNS Domain: htdom.de
+#           DNS Domain: htdom.lan
 
 # Link 2 (eth0)
 #     Current Scopes: DNS
 #          Protocols: +DefaultRoute -LLMNR -mDNS -DNSOverTLS DNSSEC=no/unsupported
 #        DNS Servers: 192.168.178.1 8.8.8.8 fd00::ca0e:14ff:fe74:63d 2001:9e8:a571:8000:ca0e:14ff:fe74:63d 2001:9e8:a57a:d00:ca0e:14ff:fe74:63d
-#         DNS Domain: htdom.de
+#         DNS Domain: htdom.lan
 
 # ---
 
@@ -121,7 +120,7 @@ docker run --rm -it alpine cat /etc/resolv.conf
 # ...
 # nameserver 192.168.178.3
 # nameserver 192.168.178.1
-# search htdom.de
+# search htdom.lan
 
 # ---
 
@@ -161,18 +160,18 @@ sudo netstat -tulnp | grep :53
 
 # ---
 
-nslookup mina.htdom.de 192.168.178.1
+nslookup mina.htdom.lan 192.168.178.1
 # Server:   192.168.178.1
 # Address:  192.168.178.1#53
 
-# ** server can't find mina.htdom.de: NXDOMAIN
+# ** server can't find mina.htdom.lan: NXDOMAIN
 
 # ---
 
-nslookup mina.htdom.de 192.168.178.3
+nslookup mina.htdom.lan 192.168.178.3
 # Server:   192.168.178.3
 # Address:  192.168.178.3#53
 
-# Name: mina.htdom.de
+# Name: mina.htdom.lan
 # Address: 192.168.178.3
 ```

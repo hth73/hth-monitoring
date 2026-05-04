@@ -136,7 +136,7 @@ services:
     module: [ dns ]
   static_configs:
     - targets:
-        - 192.168.178.3
+        - 192.168.178.50
   relabel_configs:
     - source_labels: [__address__]
       target_label: __param_target

@@ -22,9 +22,8 @@ mkdir -p ~/docker/config/grafana/provisioning/{datasources,dashboards,plugins,al
 chmod 0755 ~/docker/config/grafana
 
 sudo mkdir -p /opt/grafana/data
-sudo mkdir -P /opt/grafana
 sudo chown -R 472:472 /opt/grafana/data
-sudo chmod 0750 /opt/prometheus/data
+sudo chmod 0750 /opt/grafana/data
 ```
 
 ## Grafana Konfiguration ohne OIDC
@@ -95,7 +94,7 @@ services:
       - "./config/grafana:/etc/grafana:ro"
       - "/opt/grafana/data:/var/lib/grafana"
     ports:
-      - 3000:3000
+      - "3000:3000"
 ```
 
 ## Grafana Web UI
@@ -106,4 +105,4 @@ https://grafana.htdom.lan # admin/admin
 
 ## Grafana Data Sources konfigurieren
 Home -> Connections -> Data sources -> Add new data source -> Prometheus
-https://grafana.htdom.de/connections/datasources
+https://grafana.htdom.lan/connections/datasources

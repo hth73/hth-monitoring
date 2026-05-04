@@ -6,8 +6,8 @@
 
 ### Inhaltsverzeichnis
 
-* [Samba 4 - Active Directory (Ersatz)](samba/README.md)
 * [Reverse Proxy & PKI & Container Hardening](config/caddy/README.md)
+* [Samba 4 - Active Directory (Ersatz)](samba/README.md)
 * [Prometheus Server](config/prometheus/README.md)
 * [Grafana Server](config/grafana/README.md)
 * [Loki Server](config/loki/README.md)

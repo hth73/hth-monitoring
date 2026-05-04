@@ -64,7 +64,7 @@ services:
       - '--web.enable-lifecycle'
       - '--web.enable-admin-api'
     ports:
-      - 9090:9090
+      - "9090:9090"
 
   grafana:
     image: docker.io/grafana/grafana:13.0.1
@@ -78,7 +78,7 @@ services:
       - "./config/grafana:/etc/grafana:ro"
       - "/opt/grafana/data:/var/lib/grafana"
     ports:
-      - 3000:3000
+      - "3000:3000"
 
   loki:
     image: docker.io/grafana/loki:3.7.1

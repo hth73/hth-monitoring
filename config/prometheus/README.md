@@ -145,11 +145,11 @@ command:
 
 ```bash
 mkdir -p ~/docker/config/prometheus
-chmod -R 755 ~/docker/config/prometheus
+chmod 0755 ~/docker/config/prometheus
 
 sudo mkdir -p /opt/prometheus/data
 sudo chown -R 65534:65534 /opt/prometheus/data
-sudo chmod 750 /opt/prometheus/data
+sudo chmod 0750 /opt/prometheus/data
 ```
 
 ## Prometheus Konfiguration bei Bedarf Online aktualisieren
