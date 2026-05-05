@@ -8,7 +8,7 @@
 
 * [Vorbereitung für den Samba Server](#vorbereitung-für-den-samba-server)
 * [Samba Docker Image](#samba-docker-images)
-* [Samba Container](#grafana-alloy-agent-installieren)
+* [Samba Docker Container](#samba-docker-container)
 
 ---
 
@@ -62,14 +62,242 @@ sudo ip route add 192.168.178.50 dev macvlan0
 
 ## Samba Docker Images
 
-Für den Betrieb des Samba Active Directory Domain Controllers wurde bewusst ein eigenes Docker-Image erstellt, anstatt ein bestehendes Standard-Image zu verwenden.
+Für den Betrieb des Samba Active Directory Domain Controllers wurde ein eigenes Docker-Image erstellt, anstatt ein bestehendes Standard-Image zu verwenden.
 
-Der Hauptgrund hierfür ist die vollständige Kontrolle über die Konfiguration und das Verhalten des Systems. Standard-Images sind häufig generisch aufgebaut, enthalten nicht benötigte Komponenten oder lassen sich nur eingeschränkt an spezifische Anforderungen anpassen. In dieser Umgebung war es jedoch notwendig, den Provisionierungsprozess, die DNS-Konfiguration sowie die Integration eigener `Caddy` TLS-Zertifikate gezielt zu steuern.
+Der Hauptgrund war die vollständige Kontrolle über die Konfiguration und das Verhalten des Systems. Standard-Images sind häufig generisch aufgebaut, enthalten nicht benötigte Komponenten oder lassen sich nur eingeschränkt an spezifische Anforderungen anpassen. In dieser Umgebung war es jedoch notwendig, den Provisionierungsprozess, die DNS-Konfiguration sowie die Integration eigener `Caddy` TLS-Zertifikate gezielt zu steuern.
 
-Durch das eigene Image kann der Initialisierungsprozess (Entrypoint) exakt definiert werden. Dazu gehören unter anderem die automatisierte Domain-Provisionierung, das idempotente Anpassen der smb.conf, das Setzen von DNS-Forwardern sowie die Integration von Zertifikaten für LDAPS. Dies ermöglicht einen reproduzierbaren und konsistenten Aufbau der Umgebung.
+Durch das eigene Image kann der Initialisierungsprozess (Entrypoint) exakt definiert werden. Dazu gehören unter anderem die automatisierte Domain-Provisionierung, das idempotente Anpassen der `smb.conf`, das Setzen von DNS-Forwardern sowie die Integration von `Caddy` Zertifikaten für LDAPS. Dies ermöglicht einen reproduzierbaren und konsistenten Aufbau der Umgebung.
 
+#### Dockerfile
 ```bash
+FROM debian:bookworm
 
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y \
+      samba \
+      krb5-user \
+      winbind \
+      smbclient \
+      dnsutils \
+      iproute2 \
+      procps \
+      ldap-utils \
+      && rm -rf /var/lib/apt/lists/*
+
+# Entrypoint Script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+VOLUME ["/var/lib/samba", "/etc/samba"]
+
+EXPOSE 53 88 135 137/udp 138/udp 139 389 445 464 636
+
+ENTRYPOINT ["/entrypoint.sh"]
 ```
 
+#### entrypoint.sh
 
+```bash
+#!/bin/bash
+set -e
+
+SAMBA_DIR="/var/lib/samba"
+SMB_CONF="/etc/samba/smb.conf"
+
+echo "REALM=${REALM}"
+echo "DOMAIN=${DOMAIN}"
+
+if [ -z "$ADMIN_PASSWORD" ]; then
+  echo "ERROR: ADMIN_PASSWORD is empty!"
+  exit 1
+fi
+
+# --- default smb.conf vor erstem provisioning löschen
+if [ ! -f "$SAMBA_DIR/private/sam.ldb" ]; then
+  echo ">>> First run → removing default smb.conf"
+  rm -f "$SMB_CONF"
+
+  echo ">>> Provisioning Samba AD..."
+  samba-tool domain provision \
+    --use-rfc2307 \
+    --realm="$REALM" \
+    --domain="$DOMAIN" \
+    --server-role=dc \
+    --dns-backend=SAMBA_INTERNAL \
+    --adminpass="$ADMIN_PASSWORD"
+
+  cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
+fi
+
+# --- sicherstellen dass neue smb.conf existiert
+if [ ! -f "$SMB_CONF" ]; then
+  echo "ERROR: smb.conf missing after provisioning!"
+  exit 1
+fi
+
+# --- TLS-Certs von Caddy unter [global] einfügen
+if ! grep -q "tls enabled" "$SMB_CONF"; then
+  echo ">>> Inject TLS config"
+
+  awk '
+  BEGIN {added=0}
+  /^\[global\]/ {
+    print
+    print "    tls enabled = yes"
+    print "    tls keyfile = /certs/dc.htdom.lan.key"
+    print "    tls certfile = /certs/dc.htdom.lan.crt"
+    print "    tls cafile = /certs/root.crt"
+    added=1
+    next
+  }
+  {print}
+  END {
+    if (added==0) {
+      print "[global]"
+      print "    tls enabled = yes"
+      print "    tls keyfile = /certs/dc.htdom.lan.key"
+      print "    tls certfile = /certs/dc.htdom.lan.crt"
+      print "    tls cafile = /certs/root.crt"
+    }
+  }
+  ' "$SMB_CONF" > /tmp/smb.conf && mv /tmp/smb.conf "$SMB_CONF"
+fi
+
+# --- DNS Forwarder setzen
+DNS_FWD="${DNS_FORWARDER:-192.168.178.1}"
+
+if grep -q "dns forwarder" "$SMB_CONF"; then
+  # ersetzen falls vorhanden
+  sed -i "s|dns forwarder = .*|dns forwarder = ${DNS_FWD}|" "$SMB_CONF"
+else
+  # einfügen in [global]
+  awk -v fwd="$DNS_FWD" '
+  BEGIN {added=0}
+  /^\[global\]/ {
+    print
+    print "    dns forwarder = " fwd
+    added=1
+    next
+  }
+  {print}
+  END {
+    if (added==0) {
+      print "[global]"
+      print "    dns forwarder = " fwd
+    }
+  }
+  ' "$SMB_CONF" > /tmp/smb.conf && mv /tmp/smb.conf "$SMB_CONF"
+fi
+
+# --- resolv.conf fix
+cat <<EOF > /etc/resolv.conf
+nameserver 127.0.0.1
+search htdom.lan
+EOF
+
+echo ">>> Starting Samba AD DC..."
+exec samba -i -M single
+```
+
+## Samba Docker Container
+
+#### Samba Ordner Struktur und Caddy Zertifikate
+
+```bash
+sudo mkdir -p /opt/samba/certs
+sudo chmod -R 0750 /opt/samba
+
+sudo cp /opt/caddy/data/caddy/pki/authorities/local/root.crt /opt/samba/certs
+sudo cp /opt/caddy/data/caddy/certificates/local/dc.htdom.lan/dc.htdom.lan.crt /opt/samba/certs
+sudo cp /opt/caddy/data/caddy/certificates/local/dc.htdom.lan/dc.htdom.lan.key /opt/samba/certs
+
+sudo chmod 0644 "/opt/samba/certs/root.crt"
+sudo chmod 0644 "/opt/samba/certs/dc.htdom.lan.crt"
+sudo chmod 0600 "/opt/samba/certs/dc.htdom.lan.key"
+```
+
+#### docker-compose.yaml
+
+Das `ADMIN_PASSWORD` wurde in eine `.env` Datei ausgelagert.
+
+```bash
+---
+x-dns: &default-dns
+  dns:
+    - 192.168.178.50
+    - 192.168.178.1
+...
+networks:
+  ...
+  macvlan_ad:
+    external: true
+
+services:
+  dc:
+    build: ./samba
+    container_name: dc
+    hostname: dc.htdom.lan
+    privileged: true
+    networks:
+      macvlan_ad:
+        ipv4_address: 192.168.178.50
+    dns:
+      - 127.0.0.1
+    restart: always
+    volumes:
+      - "/opt/samba:/var/lib/samba"
+      - "/opt/samba/certs:/certs:ro"
+    environment:
+      - REALM=HTDOM.LAN
+      - DOMAIN=HTDOM
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - DNS_FORWARDER=192.168.178.1
+```
+
+#### Domain Checks
+
+Die Einrichtung des Samba AD DC erfolgte iterativ, da die Domain-Provisionierung nicht mehrfach im selben Datenbestand durchgeführt werden kann. Für jede relevante Konfigurationsänderung war daher ein vollständiger Reset des persistenten Datenverzeichnisses erforderlich.
+
+Darüber hinaus mussten Änderungen am Entrypoint-Skript durch einen erneuten Build des Docker-Images in den Container integriert werden. Dieser Prozess erhöhte den initialen Aufwand, führte jedoch zu einer klar definierten und reproduzierbaren Bereitstellung des Systems.
+
+Aber irgendwann lief der Container und es konnte getestet werden.
+
+```bash
+nslookup dc.htdom.lan 192.168.178.50
+nslookup -type=SRV _ldap._tcp.htdom.lan 192.168.178.50
+nslookup -type=SRV _kerberos._udp.htdom.lan 192.168.178.50
+
+nc -zv dc.htdom.lan 636
+# Connection to dc.htdom.lan (192.168.178.50) 636 port [tcp/ldaps] succeeded!
+
+docker exec -it dc dig dc.htdom.lan @127.0.0.1
+# ...
+# ;; QUESTION SECTION:
+# ;dc.htdom.lan.      IN  A
+
+# ;; ANSWER SECTION:
+# dc.htdom.lan.   900 IN  A 192.168.178.50
+
+# ;; AUTHORITY SECTION:
+# htdom.lan.    3600  IN  SOA dc.htdom.lan. hostmaster.htdom.lan. 12 900 600 86400 3600
+
+LDAPTLS_REQCERT=never ldapsearch -x -H ldaps://dc.htdom.lan -D "Administrator@htdom.lan" -w 'MySuperSecurePWD!' -b "DC=htdom,DC=lan" -s base
+# # extended LDIF
+# #
+# # LDAPv3
+# # base <DC=htdom,DC=lan> with scope baseObject
+# ...
+
+# # htdom.lan
+# dn: DC=htdom,DC=lan
+# objectClass: top
+# objectClass: domain
+# objectClass: domainDNS
+# ...
+# uSNCreated: 10
+# name: htdom
+# ...
+# objectCategory: CN=Domain-DNS,CN=Schema,CN=Configuration,DC=htdom,DC=lan
+```

@@ -12,7 +12,7 @@ if [ -z "$ADMIN_PASSWORD" ]; then
   exit 1
 fi
 
-# --- smb.conf vor erstem Provisioning löschen
+# --- default smb.conf vor erstem provisioning löschen
 if [ ! -f "$SAMBA_DIR/private/sam.ldb" ]; then
   echo ">>> First run → removing default smb.conf"
   rm -f "$SMB_CONF"
@@ -29,13 +29,13 @@ if [ ! -f "$SAMBA_DIR/private/sam.ldb" ]; then
   cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
 fi
 
-# --- sicherstellen dass smb.conf existiert
+# --- sicherstellen dass neue smb.conf existiert
 if [ ! -f "$SMB_CONF" ]; then
   echo "ERROR: smb.conf missing after provisioning!"
   exit 1
 fi
 
-# --- TLS in [global] einfügen (idempotent)
+# --- TLS-Certs von Caddy unter [global] einfügen
 if ! grep -q "tls enabled" "$SMB_CONF"; then
   echo ">>> Inject TLS config"
 
@@ -63,7 +63,7 @@ if ! grep -q "tls enabled" "$SMB_CONF"; then
   ' "$SMB_CONF" > /tmp/smb.conf && mv /tmp/smb.conf "$SMB_CONF"
 fi
 
-# --- DNS Forwarder setzen (idempotent)
+# --- DNS Forwarder setzen
 DNS_FWD="${DNS_FORWARDER:-192.168.178.1}"
 
 if grep -q "dns forwarder" "$SMB_CONF"; then
