@@ -12,13 +12,12 @@ if [ -z "$ADMIN_PASSWORD" ]; then
   exit 1
 fi
 
-# --- WICHTIG: smb.conf NUR vor erstem Provisioning löschen
+# --- smb.conf vor erstem Provisioning löschen
 if [ ! -f "$SAMBA_DIR/private/sam.ldb" ]; then
   echo ">>> First run → removing default smb.conf"
   rm -f "$SMB_CONF"
 
   echo ">>> Provisioning Samba AD..."
-
   samba-tool domain provision \
     --use-rfc2307 \
     --realm="$REALM" \
@@ -30,7 +29,7 @@ if [ ! -f "$SAMBA_DIR/private/sam.ldb" ]; then
   cp /var/lib/samba/private/krb5.conf /etc/krb5.conf
 fi
 
-# --- Sicherstellen dass smb.conf existiert
+# --- sicherstellen dass smb.conf existiert
 if [ ! -f "$SMB_CONF" ]; then
   echo "ERROR: smb.conf missing after provisioning!"
   exit 1
@@ -96,9 +95,5 @@ nameserver 127.0.0.1
 search htdom.lan
 EOF
 
-echo ">>> resolv.conf fixed"
-cat /etc/resolv.conf
-
 echo ">>> Starting Samba AD DC..."
 exec samba -i -M single
-
