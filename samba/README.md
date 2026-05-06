@@ -1,6 +1,6 @@
 # Samba 4 - Active Directory (Ersatz)
 
-<img src="https://img.shields.io/badge/Samba%204-2196F3?style=flat&logo=codesandbox&labelColor=ffffff&logoColor=2196F3" />
+<img src="https://img.shields.io/badge/Samba%204-2196F3?style=flat&logo=simkl&labelColor=ffffff&logoColor=2196F3" />
 
 ---
 
@@ -9,6 +9,9 @@
 * [Vorbereitung für den Samba Server](#vorbereitung-für-den-samba-server)
 * [Samba Docker Image](#samba-docker-images)
 * [Samba Docker Container](#samba-docker-container)
+* [Domain Checks](#domain-checks)
+* [Kerberos einrichten](#kerberos-einrichten)
+* [Windows Client der Domain hinzufügen](#windows-client-der-domain-hinzufügen)
 
 ---
 
@@ -68,7 +71,7 @@ Der Hauptgrund war die vollständige Kontrolle über die Konfiguration und das V
 
 Durch das eigene Image kann der Initialisierungsprozess (Entrypoint) exakt definiert werden. Dazu gehören unter anderem die automatisierte Domain-Provisionierung, das idempotente Anpassen der `smb.conf`, das Setzen von DNS-Forwardern sowie die Integration von `Caddy` Zertifikaten für LDAPS. Dies ermöglicht einen reproduzierbaren und konsistenten Aufbau der Umgebung.
 
-#### Dockerfile
+### Dockerfile
 ```bash
 FROM debian:bookworm
 
@@ -97,7 +100,7 @@ EXPOSE 53 88 135 137/udp 138/udp 139 389 445 464 636
 ENTRYPOINT ["/entrypoint.sh"]
 ```
 
-#### entrypoint.sh
+### entrypoint.sh
 
 ```bash
 #!/bin/bash
@@ -203,7 +206,7 @@ exec samba -i -M single
 
 ## Samba Docker Container
 
-#### Samba Ordner Struktur und Caddy Zertifikate
+### Samba Ordner Struktur und Caddy Zertifikate
 
 ```bash
 sudo mkdir -p /opt/samba/certs
@@ -218,7 +221,7 @@ sudo chmod 0644 "/opt/samba/certs/dc.htdom.lan.crt"
 sudo chmod 0600 "/opt/samba/certs/dc.htdom.lan.key"
 ```
 
-#### docker-compose.yaml
+### docker-compose.yaml
 
 Das `ADMIN_PASSWORD` wurde in eine `.env` Datei ausgelagert.
 
@@ -256,13 +259,13 @@ services:
       - DNS_FORWARDER=192.168.178.1
 ```
 
-#### Domain Checks
+## Domain Checks
 
-Die Einrichtung des Samba AD DC erfolgte iterativ, da die Domain-Provisionierung nicht mehrfach im selben Datenbestand durchgeführt werden kann. Für jede relevante Konfigurationsänderung war daher ein vollständiger Reset des persistenten Datenverzeichnisses erforderlich.
+Es benötigte einige durchgänge bis der Samba DC erfolgreich lief. Die Domain-Provisionierung konnte leider immer nur einmal duchgeführt werden. Für jede relevante Konfigurationsänderung war daher ein vollständiger Reset des persistenten Datenverzeichnisses `/opt/samba` erforderlich.
 
 Darüber hinaus mussten Änderungen am Entrypoint-Skript durch einen erneuten Build des Docker-Images in den Container integriert werden. Dieser Prozess erhöhte den initialen Aufwand, führte jedoch zu einer klar definierten und reproduzierbaren Bereitstellung des Systems.
 
-Aber irgendwann lief der Container und es konnte getestet werden.
+Aber irgendwann lief der Container und es konnte getestet werden:
 
 ```bash
 nslookup dc.htdom.lan 192.168.178.50
@@ -300,4 +303,98 @@ LDAPTLS_REQCERT=never ldapsearch -x -H ldaps://dc.htdom.lan -D "Administrator@ht
 # name: htdom
 # ...
 # objectCategory: CN=Domain-DNS,CN=Schema,CN=Configuration,DC=htdom,DC=lan
+```
+
+## Kerberos einrichten
+
+```bash
+sudo apt install krb5-user -y
+sudo vi /etc/krb5.conf
+
+# ---
+
+[logging]
+  default = FILE:/var/log/krb5/krb5.log
+  kdc = FILE:/var/log/krb5/krb5kdc.log
+  admin_server = FILE:/var/log/krb5/kadmind.log
+
+[libdefaults]
+  default_realm = HTDOM.LAN
+  dns_lookup_realm = true
+  dns_lookup_kdc = true
+  ticket_lifetime = 24h
+  renew_lifetime = 7d
+  forwardable = true
+
+## The following krb5.conf variables are only for MIT Kerberos.
+  kdc_timesync = 1
+  ccache_type = 4
+  forwardable = true
+  proxiable = true
+
+[realms]
+  HTDOM.LAN = {
+    kdc = dc.htdom.lan
+    admin_server = dc.htdom.lan
+}
+
+[domain_realm]
+  .htdom.lan = HTDOM.LAN
+  htdom.lan = HTDOM.LAN
+```
+
+```bash
+nc -zv 192.168.178.50 88  # TCP Port 88
+nc -zvu 192.168.178.50 88 # UDP Port 88
+nmap -sU -p 88 192.168.178.50
+host -t SRV _kerberos._udp.htdom.lan 192.168.178.50
+
+# KRB5_TRACE=/dev/stdout kinit Administrator@HTDOM.LAN
+kinit administrator@HTDOM.LAN
+klist
+# Ticket cache: FILE:/tmp/krb5cc_1000
+# Default principal: Administrator@HTDOM.LAN
+
+# Valid starting       Expires              Service principal
+# 04/28/2026 19:15:12  04/29/2026 05:15:12  krbtgt/HTDOM.LAN@HTDOM.LAN
+#   renew until 05/05/2026 19:15:08
+
+smbclient -L //dc.htdom.lan -U Administrator@HTDOM.LAN --use-kerberos=required
+# Password for [Administrator@HTDOM.LAN]:
+
+#   Sharename       Type      Comment
+#   ---------       ----      -------
+#   sysvol          Disk      
+#   netlogon        Disk      
+#   IPC$            IPC       IPC Service (Samba 4.17.12-Debian)
+# SMB1 disabled -- no workgroup available
+```
+
+## Windows Client der Domain hinzufügen
+
+In diesen Setup wird ein Windows 11 Client als Verwaltungseinheit genutzt, das Computerkonto wird der Domäne hinzugefügt und auf dem Client werden die AD-DC RSAT Tools installiert um die Samba Domänen verwalten zu können.
+
+```powershell
+## IPv6 muss auf dem Client deaktiviert werden, um mit der Samba Domäne kommunizieren zu können.
+Disable-NetAdapterBinding -Name "Ethernet" -ComponentID ms_tcpip6
+
+## DNS Server setzen
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet" -ServerAddresses ("192.168.178.50")
+Get-DnsClientServerAddress
+
+ipconfig /flushdns
+ipconfig /displaydns
+
+ping dc.htdom.lan
+ping htdom.lan
+nslookup dc.htdom.lan
+
+nslookup -type=SRV _kerberos._udp.htdom.lan
+nslookup -type=SRV _ldap._tcp.htdom.lan
+
+## Computerkonto der Domäne hinzufügen
+Add-Computer -DomainName "htdom.lan" -NewName "adm01" -Restart
+
+## RSAT Tools installieren
+Windows + I --> System --> Optional Features --> RSAT Tools
 ```
