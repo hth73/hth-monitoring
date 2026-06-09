@@ -3,7 +3,7 @@ FROM debian:bookworm-20260518
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
-    apt-get install -y \
+    apt-get install -y --no-install-recommends \
       samba \
       krb5-user \
       winbind \
