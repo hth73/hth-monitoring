@@ -17,7 +17,6 @@
 * [Loki Server](config/loki/README.md)
 * [Metric & Log Agent](config/metric-log-agents/README.md)
 * [E2E-Verfügbarkeitsprüfungen](config/blackbox/README.md)
-* 
 
 ---
 
