@@ -2,9 +2,10 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "timezone": "Europe/Berlin",
+
   "automerge": true,
-  "automergeType": "branch",
-  "prCreation": "always",
+  "automergeType": "pr",
+
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
@@ -20,4 +21,3 @@
     }
   ]
 }
-
