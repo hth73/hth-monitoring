@@ -67,7 +67,7 @@ services:
       - "9090:9090"
 
   grafana:
-    image: docker.io/grafana/grafana:13.0.1
+    image: docker.io/grafana/grafana:13.0.2
     container_name: grafana
     hostname: grafana
     user: "472:472"
