@@ -42,7 +42,7 @@ services:
       - DNS_FORWARDER=192.168.178.1
 
   prometheus:
-    image: docker.io/prom/prometheus:v3.13.2
+    image: docker.io/prom/prometheus:v3.14.0
     container_name: prometheus
     hostname: prometheus
     user: "65534:65534"
