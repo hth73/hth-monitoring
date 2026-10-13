@@ -21,25 +21,25 @@ networks:
     external: true
       
 services:
-  # dc:
-  #   build: ./samba
-  #   container_name: dc
-  #   hostname: dc.htdom.lan
-  #   privileged: true
-  #   networks:
-  #     macvlan_ad:
-  #       ipv4_address: 192.168.178.50
-  #   dns:
-  #     - 127.0.0.1
-  #   restart: always
-  #   volumes:
-  #     - "/opt/samba:/var/lib/samba"
-  #     - "/opt/samba/certs:/certs:ro"
-  #   environment:
-  #     - REALM=HTDOM.LAN
-  #     - DOMAIN=HTDOM
-  #     - ADMIN_PASSWORD=${ADMIN_PASSWORD}
-  #     - DNS_FORWARDER=192.168.178.1
+  dc:
+    build: ./samba
+    container_name: dc
+    hostname: dc.htdom.lan
+    privileged: true
+    networks:
+      macvlan_ad:
+        ipv4_address: 192.168.178.50
+    dns:
+      - 127.0.0.1
+    restart: always
+    volumes:
+      - "/opt/samba:/var/lib/samba"
+      - "/opt/samba/certs:/certs:ro"
+    environment:
+      - REALM=HTDOM.LAN
+      - DOMAIN=HTDOM
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - DNS_FORWARDER=192.168.178.1
 
   prometheus:
     image: docker.io/prom/prometheus:v3.15.0
