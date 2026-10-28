@@ -113,6 +113,28 @@ services:
     ports:
       - "9115:9115"
 
+  gitlab:
+    image: docker.io/gitlab/gitlab-ce:19.5.1-ce.0
+    platform: linux/arm64
+    container_name: gitlab
+    hostname: gitlab
+    networks: [homenet]
+    restart: always
+    shm_size: '256m'
+    volumes:
+      - "./config/gitlab:/etc/gitlab"
+      - "/opt/gitlab/logs:/var/log/gitlab"
+      - "/opt/gitlab/data:/var/opt/gitlab"
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.htdom.lan'
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+        letsencrypt['enable'] = false
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - '2224:22'
+
 #  oidc:
 #    image: docker.io/authelia/authelia:4.39
 #    container_name: oidc
