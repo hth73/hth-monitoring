@@ -40,3 +40,9 @@ prometheus.htdom.lan {
   reverse_proxy prometheus:9090
   tls internal
 }
+
+gitlab.htdom.lan {
+  reverse_proxy gitlab:80
+  tls internal
+}
+
