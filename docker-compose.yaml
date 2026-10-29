@@ -114,7 +114,7 @@ services:
       - "9115:9115"
 
   gitlab:
-    image: docker.io/gitlab/gitlab-ce:19.5.1-ce.0
+    image: docker.io/gitlab/gitlab-ce:19.5.3-ce.0
     platform: linux/arm64
     container_name: gitlab
     hostname: gitlab
